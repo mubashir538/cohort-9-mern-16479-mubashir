@@ -6,12 +6,12 @@ import app from './app';
 
 
 process.on('uncaughtException', (err:Error) => {
-  logger.fatal({err: Error}, 'Uncaught Exception');
+  logger.fatal({err: Error}, `Uncaught Exception: ${err.message} -- Shutting down`);
   process.exit(1);
 });
 
 process.on('unhandledRejection',(err:Error) => {
-  logger.fatal({err: Error}, 'Unhandled Rejection');
+  logger.fatal({err: Error}, `Unhandled Rejection: ${err.message} -- Shutting down`);
   process.exit(1);
 });
 

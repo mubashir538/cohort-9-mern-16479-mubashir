@@ -5,7 +5,7 @@ const isTest : boolean = process.env.NODE_ENV === 'test';
 
 const logger: Logger = pino({
     level: isTest? 'silent' : process.env.LOG_LEVEL || 'debug',
-    transport: isDevelopment && isTest ? {
+    transport: isDevelopment ? {
         target: 'pino-pretty',
         options: {
             colorize: true,
