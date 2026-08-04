@@ -1,9 +1,15 @@
 import dotenv from 'dotenv';
 dotenv.config();
+import dns from 'node:dns';
+
 
 import logger from './config/logger';
 import app from './app';
+import connectToDatabase from './config/db';
 
+
+
+dns.setServers(['8.8.8.8', '8.8.4.4']);
 
 process.on('uncaughtException', (err:Error) => {
   logger.fatal({err: Error}, `Uncaught Exception: ${err.message} -- Shutting down`);
@@ -28,8 +34,21 @@ function getPort():number{
 
   return parsedPort;
 }
+
 const PORT = getPort();
+
+async function startServer(): Promise<void> {
+  try{
+    await connectToDatabase();
 
 app.listen(PORT, () => {
   logger.info(`Server is running on port ${PORT}`);
 });
+  }catch (err ){
+    logger.fatal({err: Error}, `Failed to start server! ${err}`);
+    process.exit(1);
+  }
+}
+
+startServer();
+
