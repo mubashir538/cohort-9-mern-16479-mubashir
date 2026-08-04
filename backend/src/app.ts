@@ -33,6 +33,7 @@ const corsOptions: CorsOptions = {
   }
 }
 
+app.use(helmet());
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(pino_http({ logger }));
