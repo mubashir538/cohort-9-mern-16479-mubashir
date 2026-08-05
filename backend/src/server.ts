@@ -5,9 +5,6 @@ import logger from './config/logger';
 import app from './app';
 import connectToDatabase from './config/db';
 
-
-
-
 process.on('uncaughtException', (err:Error) => {
   logger.fatal({err}, `Uncaught Exception: ${err.message} -- Shutting down`);
   process.exit(1);
