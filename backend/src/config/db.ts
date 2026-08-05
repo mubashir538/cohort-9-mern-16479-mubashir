@@ -11,7 +11,7 @@ async function connectToDatabase(): Promise<void> {
         await mongoose.connect(mongoURI,{tls:true,
       serverSelectionTimeoutMS: 10000,});
     }catch(err){
-        logger.fatal({err: Error}, `Failed to connect to MongoDB! ${err}`);
+        logger.fatal({err}, `Failed to connect to MongoDB! ${err}`);
         process.exit(1);
     }
 
