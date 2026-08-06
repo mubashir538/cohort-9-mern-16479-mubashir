@@ -2,7 +2,12 @@ import {Note } from '../models';
 import type {INote} from '../models/note.model';
 import AppError from '../utils/Errors';
 import logger from '../config/logger';
+import { Types } from 'mongoose';
 
+   const MAX_LENGTH = 100;
+    const escapeRegex = (value:string) =>{
+        return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
 
 async function createNote(userId: string, title: string, content?: string): Promise<INote> {
     const note = await Note.create({ userId, title, content: content ?? '' });
@@ -15,8 +20,14 @@ async function createNote(userId: string, title: string, content?: string): Prom
 
 async function getAllNotes(userId: string, searchQuery?: string): Promise<INote[]> {
     const filter : Record<string,unknown> = {userId};
+    
 
     if(searchQuery){
+
+        if(searchQuery.length > MAX_LENGTH){
+            throw new AppError('Search query is too long', 400, "SEARCH_QUERY_TOO_LONG");
+        }
+        const escapedSearch = escapeRegex(searchQuery);
         filter.$or = [
             {title: {$regex: searchQuery, $options: 'i'}},
             {content: {$regex: searchQuery, $options: 'i'}},
@@ -28,6 +39,11 @@ async function getAllNotes(userId: string, searchQuery?: string): Promise<INote[
 }
 
 async function getNotebyId(userId:string, noteId:string):Promise<INote> {
+
+    if (!Types.ObjectId.isValid(noteId)) {
+        throw new AppError('Invalid note id', 400, "INVALID_NOTE_ID");
+    }
+
     const note = await Note.findOne({_id: noteId, userId: userId})
 
     if (!note) {
@@ -43,6 +59,11 @@ interface NoteUpdate{
 }
 
 async function updateNote(userId:string, noteId:string, update: NoteUpdate):Promise<INote> {
+
+    if (!Types.ObjectId.isValid(noteId)) {
+        throw new AppError('Invalid note id', 400, "INVALID_NOTE_ID");
+    }
+
     const note = await getNotebyId(userId, noteId);
 
     if(update.title !== undefined ){
@@ -59,6 +80,11 @@ async function updateNote(userId:string, noteId:string, update: NoteUpdate):Prom
 
 
 async function deleteNote(userId:string,noteId:string): Promise<void> {
+
+    if (!Types.ObjectId.isValid(noteId)) {
+        throw new AppError('Invalid note id', 400, "INVALID_NOTE_ID");
+    }
+    
     const note = await getNotebyId(userId, noteId);
 
     await note.deleteOne();
