@@ -8,10 +8,11 @@ import errorMiddleware from './middlewares/error.middleware';
 import notesRoutes from './routes/notes.routes';
 
 
+
 const app: Application = express();
 
 
-const allowedOrigins = (process.env.CORS_ORIGINS || '').split(',').map((origin)=> origin.trim()).filter(Boolean);
+const allowedOrigins = (process.env.CORS_ORIGINS || 'http://localhost:5173').split(',').map((origin)=> origin.trim()).filter(Boolean);
 
 const isProduction = process.env.NODE_ENV === 'production';
 
