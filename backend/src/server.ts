@@ -5,15 +5,14 @@ import logger from './config/logger';
 import app from './app';
 import connectToDatabase from './config/db';
 
-
-
-
-process.on('uncaughtException', (err:Error) => {
-  logger.fatal({err}, `Uncaught Exception: ${err.message} -- Shutting down`);
+process.on('uncaughtException', (reason:unknown) => {
+  const err = reason instanceof Error ? reason : new Error(String(reason));
+    logger.fatal({err}, `Uncaught Exception: ${err.message} -- Shutting down`);
   process.exit(1);
 });
 
-process.on('unhandledRejection',(err:Error) => {
+process.on('unhandledRejection',(reason:unknown) => {
+  const err = reason instanceof Error ? reason : new Error(String(reason));
   logger.fatal({err}, `Unhandled Rejection: ${err.message} -- Shutting down`);
   process.exit(1);
 });
@@ -46,7 +45,7 @@ async function startServer(): Promise<void> {
     logger.info(`Server is running on port ${PORT}`);
 });
   }catch (err){
-    logger.fatal({err: Error}, `Failed to start server! ${err}`);
+    logger.fatal({err}, `Failed to start server! ${err}`);
     process.exit(1);
   }
 }

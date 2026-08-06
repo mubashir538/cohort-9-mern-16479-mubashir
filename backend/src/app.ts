@@ -3,7 +3,8 @@ import cors,{CorsOptions} from 'cors';
 import pino_http from 'pino-http';
 import logger from './config/logger';
 import helmet from 'helmet';
-
+import authRoutes from './routes/auth.routes';
+import errorMiddleware from './middlewares/error.middleware';
 
 
 const app: Application = express();
@@ -42,6 +43,9 @@ app.use(pino_http({ logger }));
 app.get('/health', (req, res) => {
   res.status(200).json({ status: 'ok' });
 });
+
+app.use('/api/auth', authRoutes);
+app.use(errorMiddleware);
 
 
 export default app;
