@@ -2,6 +2,7 @@ import {useState} from 'react';
 import type {FormEvent} from 'react';
 import {Link, useNavigate} from 'react-router-dom';
 import {useAuth} from '../context/AuthContext';
+import axios from 'axios';
 
 function SignupPage(){
     const [email,setEmail] = useState('');
@@ -23,9 +24,14 @@ function SignupPage(){
             await signup(name,email,password);
             navigate('/dashboard');
         }
-        catch(err:any){
-            const errorMessage = err.response?.data?.error?.message || "Something went wrong";
-            setError(errorMessage);
+        catch(err:unknown){
+            if(axios.isAxiosError(err)){
+                const msg = err.response?.data?.error?.message || "Something went wrong";
+                setError(msg);
+            }
+            else{
+                setError('Something went wrong');
+            }
         }
         finally{
             setIsSubmitting(false);
@@ -37,8 +43,11 @@ function SignupPage(){
         <h1>Signup </h1>
         {error && <p>{error}</p>}
 
+        <label htmlFor="name">Name</label>
         <input id="name" type="text" value={name} onChange={(e)=>setName(e.target.value)} required/>
+        <label htmlFor="email">Email</label>
         <input id="email" type="email" value={email} onChange={(e)=>setEmail(e.target.value)} required/>
+        <label htmlFor="password">Password</label>
         <input id="password" type="password" value={password} onChange={(e)=>setPassword(e.target.value)} required minLength={8}/>
         <button type="submit" disabled={isSubmitting}>{isSubmitting ? 'Creating Your Account...' : 'Signup'}</button>
 

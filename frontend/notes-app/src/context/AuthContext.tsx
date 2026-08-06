@@ -23,15 +23,10 @@ export function AuthProvider({children}: {children: ReactNode}){
     const [isLoading, setIsLoading] = useState(true);
     
     useEffect(()=>{
-        const token = localStorage.getItem('token');
-
-        if (!token){
-            setIsLoading(false);
-            return;
-        }
-
         authApi.getMe().then((response)=>{
             setUser(response.data.data.user);
+        }).catch(()=>{
+            setUser(null);
         }).finally(()=>{
             setIsLoading(false);
         });
@@ -39,9 +34,8 @@ export function AuthProvider({children}: {children: ReactNode}){
 
     async function signup(name:string,email:string, password: string): Promise<User>{
         const response = await authApi.signup(name,email,password);
-        const {token,user:newUser} = response.data.data;
+        const newUser = response.data.data.user;
 
-        localStorage.setItem('token',token);
         setUser(newUser);
 
         return newUser;
@@ -49,9 +43,8 @@ export function AuthProvider({children}: {children: ReactNode}){
 
     async function login(email:string, password: string): Promise<User>{
         const response = await authApi.login(email,password);
-        const {token,user: loggedinUser} = response.data.data;
+        const  loggedinUser = response.data.data.user;
 
-        localStorage.setItem('token',token);
         setUser(loggedinUser);
 
         return loggedinUser;
@@ -61,7 +54,6 @@ async function logout(): Promise<void>{
     try{
         await authApi.logout();
     }finally{
-localStorage.removeItem('token');
     setUser(null);
     }
 }
@@ -86,7 +78,7 @@ export function useAuth(): AuthContextType{
     const context = useContext(AuthContext);
 
     if(!context){
-        throw new Error('useAuth must be used within AuthProvider');
+        throw new   Error('useAuth must be used within AuthProvider');
     }
     return context;
 }
