@@ -29,8 +29,8 @@ async function getAllNotes(userId: string, searchQuery?: string): Promise<INote[
         }
         const escapedSearch = escapeRegex(searchQuery);
         filter.$or = [
-            {title: {$regex: searchQuery, $options: 'i'}},
-            {content: {$regex: searchQuery, $options: 'i'}},
+            {title: {$regex: escapedSearch, $options: 'i'}},
+            {content: {$regex: escapedSearch, $options: 'i'}},
         ];
     }
 
