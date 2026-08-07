@@ -5,6 +5,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import DashboardPage from './pages/DashboardPage';
+import NoteEditorPage from './pages/NoteEditorPage';
 
 function App() {
   return (
@@ -15,6 +16,16 @@ function App() {
 
           <Route path="/dashboard" element = {<ProtectedRoute>
             <DashboardPage />
+          </ProtectedRoute>
+          } />
+
+           <Route path="/notes/new" element = {<ProtectedRoute>
+            <NoteEditorPage />
+          </ProtectedRoute>
+          } />
+
+           <Route path="/notes/:id" element = {<ProtectedRoute>
+            <NoteEditorPage />
           </ProtectedRoute>
           } />
 
