@@ -61,7 +61,7 @@ if (title === undefined && content === undefined) {
         throw new AppError('Title is Required', 400, "TITLE_REQUIRED");
     }
 
-    if (typeof content !== 'string' && typeof content !== undefined){
+    if (typeof content !== 'string' && typeof content !== 'undefined'){
         throw new AppError('Content is Must be String', 400, 'INVALID_CONTENT');
     }
 

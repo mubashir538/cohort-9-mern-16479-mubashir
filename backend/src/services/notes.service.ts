@@ -5,7 +5,7 @@ import logger from '../config/logger';
 import { Types } from 'mongoose';
 
    const MAX_LENGTH = 100;
-    const escapeRegex = (value:string) =>{
+    const escapeRegex = (value:string):string =>{
         return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     }
 
