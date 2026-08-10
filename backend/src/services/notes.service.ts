@@ -3,6 +3,7 @@ import type {INote} from '../models/note.model';
 import AppError from '../utils/Errors';
 import logger from '../config/logger';
 import { Types } from 'mongoose';
+import { log } from 'node:console';
 
    const MAX_LENGTH = 100;
     const escapeRegex = (value:string):string =>{
@@ -10,11 +11,18 @@ import { Types } from 'mongoose';
     }
 
 async function createNote(userId: string, title: string, content?: string): Promise<INote> {
-    const note = await Note.create({ userId, title, content: content ?? '' });
+    try{
 
-    logger.info({userId,noteId: note._id.toString()},'Note created successfully');
+        const note = await Note.create({ userId, title, content: content ?? '' });
+        logger.info({userId,noteId: note._id.toString()},'Note created successfully');
+        return note;
+    }catch(error){
+        logger.error({error,userId},"Failed to Create Note");
+        throw new AppError('Failed to create Note',500,'NOTE_CREATE_FAILED');
 
-    return note;
+    }
+
+
 }
 
 
@@ -60,9 +68,6 @@ interface NoteUpdate{
 
 async function updateNote(userId:string, noteId:string, update: NoteUpdate):Promise<INote> {
 
-    if (!Types.ObjectId.isValid(noteId)) {
-        throw new AppError('Invalid note id', 400, "INVALID_NOTE_ID");
-    }
 
     const note = await getNotebyId(userId, noteId);
 
@@ -73,22 +78,31 @@ async function updateNote(userId:string, noteId:string, update: NoteUpdate):Prom
         note.content = update.content;
     }
 
+    try{
     await note.save();
     logger.info({userId,noteId},'Note updated successfully');
     return note;
+}catch(error){
+    logger.error({error,userId,noteId},"Failed to Update Note");
+    throw new AppError('Failed to update Note',500,'NOTE_UPDATE_FAILED');
+
+}
 }
 
 
 async function deleteNote(userId:string,noteId:string): Promise<void> {
 
-    if (!Types.ObjectId.isValid(noteId)) {
-        throw new AppError('Invalid note id', 400, "INVALID_NOTE_ID");
-    }
     
     const note = await getNotebyId(userId, noteId);
 
-    await note.deleteOne();
-    logger.info({userId,noteId},'Note deleted successfully');
+    try{
+        await note.deleteOne();
+        logger.info({userId,noteId},'Note deleted successfully');
+     }catch(error){
+        logger.error({error,userId,noteId},"Failed to Delete Note");
+        throw new AppError('Failed to Delete Note',500,'NOTE_DELETE_FAILED');
+
+    }
 }
 
 export default {
