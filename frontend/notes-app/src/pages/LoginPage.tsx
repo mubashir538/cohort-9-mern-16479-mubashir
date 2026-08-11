@@ -42,7 +42,7 @@ function LoginPage(){
                 <input id="email" type="email" value={email} onChange={(e)=>setEmail(e.target.value)} required/>
                 <label htmlFor="password">Password</label>
                 <input id="password" type="password" value={password} onChange={(e)=>setPassword(e.target.value)} required/>
-
+                <p>{error}</p>
                 <button type="submit" disabled={isSubmitting}>
                     {isSubmitting ? 'Logging in...' : 'Login'}
                 </button>
