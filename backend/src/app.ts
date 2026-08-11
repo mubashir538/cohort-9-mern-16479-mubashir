@@ -5,6 +5,7 @@ import logger from './config/logger';
 import helmet from 'helmet';
 import authRoutes from './routes/auth.routes';
 import errorMiddleware from './middlewares/error.middleware';
+import notesRoutes from './routes/notes.routes';
 
 
 const app: Application = express();
@@ -45,6 +46,7 @@ app.get('/health', (req, res) => {
 });
 
 app.use('/api/auth', authRoutes);
+app.use('/api/notes', notesRoutes);
 app.use(errorMiddleware);
 
 
