@@ -17,7 +17,7 @@ function NoteCard({note,onDelete}: NoteCardProps){
 
     return (
         <div>
-            <Link to={'/notes/${note._id}'}>
+            <Link to={`/notes/${note._id}`}>
                 <h3>{note.title}</h3>
             </Link>
             <p>{preview || "No Content yet ..."}</p>

@@ -8,9 +8,10 @@ export interface Note {
     updatedAt: string;
 }
 
+
 export const notesApi = {
-    getAll: (search?: string) =>
-        axiosClient.get<{success: boolean; data: {notes: Note[]}}>('/notes',{params: search? {search}: {},}),
+    getAll: (search?: string,signal?:AbortSignal) =>
+        axiosClient.get<{success: boolean; data: {notes: Note[]}}>('/notes',{params: search? {search}: {},signal}),
 
     getbyId: (id: string)=>
         axiosClient.get<{success: boolean; data: {note: Note}}>(`/notes/${id}`),
@@ -21,7 +22,7 @@ export const notesApi = {
     update: (id:string, title: string, content: string)=>
             axiosClient.put<{success: boolean; data: {note:Note}}>(`/notes/${id}`,{title,content}),
 
-    delete: (id:string)=> axiosClient.delete(`/notes/${id}`),
+    delete: (id:string)=> axiosClient.delete<{success: boolean;data:{message:string}}>(`/notes/${id}`),
 };
 
 

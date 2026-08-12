@@ -13,7 +13,7 @@ function DashboardPage(){
     const [error,setError] = useState('');
 
 
-    const fetchNotes=   useCallback(async (search: string)=> {
+    const fetchNotes=   useCallback(async (search: string,signal:AbortSignal)=> {
         setIsLoading(true);
         setError('');
         try{
@@ -21,17 +21,28 @@ function DashboardPage(){
             setNotes(response.data.data.notes);
         }
         catch(err){
+            if(signal.aborted){
+                return;
+            }
             setError('Can not Load Notes');
         }finally{
-            setIsLoading(false);
+            if(!signal.aborted){
+                setIsLoading(false);
+            }
         }
     },[]);
 
     useEffect(()=>{
+        const controller = new AbortController();
+
         const timeoutId = setTimeout(() => {
-            fetchNotes(searchTerm);
+            fetchNotes(searchTerm,controller.signal);
         },400);
-        return () => clearTimeout(timeoutId);
+        return () => {
+            clearTimeout(timeoutId);
+            controller.abort();
+
+        }
     },[searchTerm,fetchNotes]);
 
 
@@ -42,6 +53,7 @@ function DashboardPage(){
         try{
             await notesApi.delete(noteId);
             setNotes((prev)=> prev.filter((n)=> n._id !== noteId));
+            await fetchNotes(searchTerm,new AbortController().signal);
         }catch(err){
             setError('Failed to delete note');
         }

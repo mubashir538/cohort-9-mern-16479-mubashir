@@ -63,10 +63,12 @@ function NoteEditorPage(){
 
     return(
         <div>
-            <input type="text" placeholder="Note title" value ={title} onChange={(e)=>setTitle(e.target.value)}/>
+            <label htmlFor="note-title"></label>
+            <input id="note-title" type="text" placeholder="Note title" value ={title} onChange={(e)=>setTitle(e.target.value)}/>
             {error && <p>{error}</p>}
             
-                <ReactQuill theme="snow" value={content} onChange={setContent}/>
+                <label htmlFor="note-content"></label>
+                <ReactQuill id="note-content" placeholder='Content' area-label="note content" theme="snow" value={content} onChange={setContent}/>
                 <div>
                     <button onClick={handleCancel}>Cancel</button>
                     <button onClick={handleSave} disabled={isSaving}>{isSaving?'Saving...':'Save'}</button>
