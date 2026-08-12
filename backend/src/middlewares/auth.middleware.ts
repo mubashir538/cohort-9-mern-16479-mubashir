@@ -10,14 +10,13 @@ interface TokenPayload{
 }
 
 const verifyToken = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-    const authHeader = req.headers.authorization;
+    
+    const token = req.cookies?.token;
 
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    if (!token) {
         throw new AppError('No Token Provided', 401, "NO_TOKEN_PROVIDED");
-
-
     }
-    const token = authHeader.split(' ')[1];
+
     try{
         const decodedToken = jwt.verify(token,process.env.JWT_SECRET as string) as TokenPayload;
 

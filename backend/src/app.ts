@@ -6,6 +6,7 @@ import helmet from 'helmet';
 import authRoutes from './routes/auth.routes';
 import errorMiddleware from './middlewares/error.middleware';
 import notesRoutes from './routes/notes.routes';
+import cookieParser from 'cookie-parser';
 
 
 const app: Application = express();
@@ -32,14 +33,15 @@ const corsOptions: CorsOptions = {
       return callback(null,true);
     }
     return callback(new Error(`Origin ${origin} not allowed by CORS`));
-  }
+  },
+  credentials: true
 }
 
 app.use(helmet());
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(pino_http({ logger }));
-
+app.use(cookieParser());
 
 app.get('/health', (req, res) => {
   res.status(200).json({ status: 'ok' });

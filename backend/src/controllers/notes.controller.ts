@@ -34,7 +34,10 @@ const createNote = asyncHandler(async (req:Request<{},{},CreateNoteBody>, res:Re
 });
 
 const getAllNotes = asyncHandler(async (req:Request, res:Response) => {
-   const search= req.query.search as string || undefined;
+   const search = req.query.search;
+   if (search !== undefined && typeof search !== 'string') {
+       throw new AppError('Search must be a string', 400, 'INVALID_SEARCH');
+   }
    const notes = await notesService.getAllNotes(req.userId!, search);
 
    res.status(200).json({success: true, data: {notes}});
@@ -48,6 +51,7 @@ const getNoteById = asyncHandler(async (req:Request<NoteParams>, res:Response) =
 });
 
 const  updateNote = asyncHandler(async (req:Request<NoteParams,{},UpdateNoteBody>, res:Response) => {
+
 const {title,content} = req.body;
 
 if (title === undefined && content === undefined) {
