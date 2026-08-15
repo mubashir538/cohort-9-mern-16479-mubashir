@@ -71,6 +71,7 @@ function DashboardPage(){
     <div>
     <h1>Dashboard</h1>
     <h2>Welcome {user?.name}</h2>
+    <Link to={'/profile'}>View Profile</Link>
     <button onClick={()=> handleLogout()}>Logout</button>
     </div>
 <div>

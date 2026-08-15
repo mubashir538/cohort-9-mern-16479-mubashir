@@ -6,6 +6,7 @@ import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import DashboardPage from './pages/DashboardPage';
 import NoteEditorPage from './pages/NoteEditorPage';
+import ProfilePage from './pages/ProfilePage';
 
 function App() {
   return (
@@ -28,6 +29,12 @@ function App() {
             <NoteEditorPage />
           </ProtectedRoute>
           } />
+
+<Route path="/profile" element= {
+  <ProtectedRoute>
+    <ProfilePage />
+  </ProtectedRoute>
+}></Route>          
 
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
         </Routes>
