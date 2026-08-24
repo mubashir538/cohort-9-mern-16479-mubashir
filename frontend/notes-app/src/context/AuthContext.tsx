@@ -1,5 +1,6 @@
 import {createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import {authApi} from '../api/auth.api';
+import axios from 'axios';
 
 interface User{
     id: string;
@@ -7,10 +8,39 @@ interface User{
     name: string;
 }
 
+function getAuthErrorMessage(error: unknown): string {
+    if (axios.isAxiosError(error)) {
+        const message = error.response?.data?.message;
+
+        if (typeof message === 'string') {
+            return message;
+        }
+
+        if (error.response?.status === 401) {
+            return 'Invalid email or password';
+        }
+
+        if (error.response?.status === 409) {
+            return 'An account with this email already exists';
+        }
+
+        if (!error.response) {
+            return 'Unable to connect to the server';
+        }
+    }
+
+    if (error instanceof Error) {
+        return error.message;
+    }
+
+    return 'Something went wrong. Please try again.';
+}
+
 interface AuthContextType{
     user: User |null;
     isAuthenticated: boolean;
     isLoading:boolean;
+    authError: string | null;
     signup:(name:string, email:string, password:string)=>Promise<User>;
     login: (email:string, password:string)=>Promise<User>;
     logout: ()=>Promise<void>;
@@ -21,6 +51,7 @@ const AuthContext = createContext<AuthContextType | null>(null);
 export function AuthProvider({children}: {children: ReactNode}){
     const [user,setUser]= useState<User | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [authError,setAuthError] = useState<string | null>(null);
     
     useEffect(()=>{
         authApi.getMe().then((response)=>{
@@ -33,27 +64,48 @@ export function AuthProvider({children}: {children: ReactNode}){
     },[]);
 
     async function signup(name:string,email:string, password: string): Promise<User>{
-        const response = await authApi.signup(name,email,password);
-        const newUser = response.data.data.user;
-
-        setUser(newUser);
-
-        return newUser;
+       try{
+            setAuthError(null);
+           const response = await authApi.signup(name,email,password);
+           const newUser = response.data.data.user;
+           
+           setUser(newUser);
+           
+           return newUser;
+        }catch(error){
+            const msg = getAuthErrorMessage(error);
+            setAuthError(msg);
+            throw new Error(msg);
+        }
     }
 
     async function login(email:string, password: string): Promise<User>{
-        const response = await authApi.login(email,password);
-        const  loggedinUser = response.data.data.user;
+        try{
+            setAuthError(null);
 
-        setUser(loggedinUser);
-
-        return loggedinUser;
+            const response = await authApi.login(email,password);
+            const  loggedinUser = response.data.data.user;
+            
+            setUser(loggedinUser);
+            
+            return loggedinUser;
+        }catch(error){
+            const msg = getAuthErrorMessage(error);
+            setAuthError(msg);
+            throw new Error(msg);
+        }
 }
 
 async function logout(): Promise<void>{
     try{
+        setAuthError(null);
         await authApi.logout();
-    }finally{
+    }catch(error){
+        const msg = getAuthErrorMessage(error);
+            setAuthError(msg);
+            throw new Error(msg);
+    }
+    finally{
     setUser(null);
     }
 }
@@ -63,6 +115,7 @@ const value : AuthContextType = {
     isAuthenticated: !!user,
     isLoading,
     signup,
+    authError,
     login,
     logout
 };
