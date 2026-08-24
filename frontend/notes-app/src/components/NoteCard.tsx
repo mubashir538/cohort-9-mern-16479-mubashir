@@ -1,7 +1,7 @@
-import {useNavigate} from 'react-router-dom';
+import {useNavigate,Link} from 'react-router-dom';
 import type {MouseEvent} from 'react';
 import type {Note} from '../api/notes.api';
-import {Pencil,Trash2} from 'lucide-react';
+import {Trash2} from 'lucide-react';
 import './NoteCard.css'
 
 interface NoteCardProps {
@@ -20,7 +20,7 @@ function NoteCard({note,onDelete}: NoteCardProps){
     const preview = stripHtml(note.content).substring(0,140);
 
     function handleCardClick(){
-        navigate(`/notes/${note._id}`);
+        navigate(`/notes/${note._id}/edit`);
     }
 
     function handleDeleteClick(e:MouseEvent<HTMLButtonElement>){
@@ -29,6 +29,7 @@ function NoteCard({note,onDelete}: NoteCardProps){
     }
 
     return (
+        <Link to={`/notes/${note._id}/edit`} className="NoteCardLink">
         <div className="NoteCard" onClick={handleCardClick}>
             <h3 className="NoteCardTitle">{note.title || 'Untitled Note'}</h3>
             <p className="NoteCardPreview">{preview || "No Content yet ..."}</p>
@@ -36,14 +37,14 @@ function NoteCard({note,onDelete}: NoteCardProps){
             <div className="NoteCardFooter">
                 <span className="NoteCardDate">{new Date(note.updatedAt).toLocaleDateString()}</span>
                 <div className="NoteCardActions">
-                <button onClick={handleDeleteClick} className="NoteCardDeleteButton">
+                <button onClick={handleDeleteClick} className="NoteCardDeleteButton" aria-label="Delete note">
                 <Trash2 size={15}/>
                 </button>
                 </div>
 
             </div>
-
-        </div>
+            </div>
+        </Link>
     );
 }
 

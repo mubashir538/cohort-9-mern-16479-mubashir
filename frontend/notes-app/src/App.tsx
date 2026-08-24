@@ -7,7 +7,6 @@ import SignupPage from './pages/SignupPage';
 import DashboardPage from './pages/DashboardPage';
 import NoteEditorPage from './pages/NoteEditorPage';
 import ProfilePage from './pages/ProfilePage';
-import ViewNotePage from './pages/ViewNotePage';
 
 function App() {
   return (
@@ -26,15 +25,11 @@ function App() {
           </ProtectedRoute>
           } />
 
-           <Route path="/notes/:id" element = {<ProtectedRoute>
+           <Route path="/notes/:id/edit" element = {<ProtectedRoute>
             <NoteEditorPage />
           </ProtectedRoute>
           } />
 
-          <Route path="/notes/:id" element = {<ProtectedRoute>
-            <ViewNotePage />
-          </ProtectedRoute>
-          } />
 
 <Route path="/profile" element= {
   <ProtectedRoute>

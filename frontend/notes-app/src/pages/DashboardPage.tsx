@@ -98,7 +98,8 @@ function DashboardPage(){
     </div>
 
 <div className="DashboardToolbar">
-<input type="text" placeholder="Search Notes" className="DashboardSearchInput" value={searchTerm} onChange={(e)=> setSearchTerm(e.target.value)}/>
+    <label htmlFor="search-notes">Search Notes</label>
+<input id="search-notes" type="text" placeholder="Search Notes" className="DashboardSearchInput" value={searchTerm} onChange={(e)=> setSearchTerm(e.target.value)}/>
 <Link to={'/notes/new'} className="DashboardCreateLink">Create New Note</Link>
 </div>
 

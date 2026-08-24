@@ -1,5 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700;800&family=Inter:wght@400;500;600;700&display=swap');
-
+@import 'https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700;800&family=Inter:wght@400;500;600;700&display=swap';
 :root{
   --primary50: #fff2f0;
   --primary100: #fee4e1;
