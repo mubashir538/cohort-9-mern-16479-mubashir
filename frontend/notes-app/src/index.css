@@ -1,111 +1,100 @@
-:root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700;800&family=Inter:wght@400;500;600;700&display=swap');
 
-  --sans: 'Segoe UI', roboto, sans-serif;
-  --heading:  'Segoe UI', roboto, sans-serif;
-  --mono:  consolas, monospace;
+:root{
+  --primary50: #fff2f0;
+  --primary100: #fee4e1;
+  --primary200: #fec9c3;
+  --primary300: #fdaea5;
+  --primary400: #fc8678;
+  --primary500: #fb5743;
+  --primary600: #dd4d3b;
+  --primary700: #b53f30;
+  --primary800: #8d3126;
+  --primary900: #64231b;
 
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  --neutral50: #fbf9f9;
+  --neutral100: #f5f1f0;
+  --neutral200: #e9e4e2;
+  --neutral300: #d1cac7;
+  --neutral400: #a19691;
+  --neutral500: #7a706c;
+  --neutral600: #584f4b;
+  --neutral700: #3e3632;
+  --neutral800: #28221f;
+  --neutral900: #171311;
 
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
+  --surfaceDark900: #172526;
+  --surfaceDark800: #203032;
+  --surfaceDark700: #324648;
+  --surfaceDark600: #819698;
+  --textOnDark: #f5f2f0;
+  --textOnDarkMuted: #acb8b9;
+
+  --success: #22a06b;
+  --warning: #f5a623;
+  --error: #e63f33;
+  --info: #2f93da;
+
+  --fontDisplay: 'Space Grotesk', sans-serif;
+  --fontBody: 'Inter', sans-serif;
+
+  --displayLg: 2rem;
+  --displayMd: 1.5rem;
+  --headingSm: 1.125rem;
+  --bodyMd: 0.9375rem;
+  --bodySm: 0.8125rem;
+  --labelSize: 0.8125rem;
+  --buttonSize: 1rem;
+
+  --space1: 0.25rem;
+  --space2: 0.5rem;
+  --space3: 0.75rem;
+  --space4: 1rem;
+  --space5: 1.5rem;
+  --space6: 2rem;
+  --space7: 3rem;
+
+  --radiusSm: 0.5rem;
+  --radiusMd: 0.75rem;
+  --radiusLg: 1.25rem;
+  --radiusXl: 1.75rem;
+  --radiusFull: 999px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
 
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
-}
-
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
+*{
   box-sizing: border-box;
 }
 
-body {
+html{
+    font-size: 100%;
+}
+
+body{
+  margin: 0;
+  font-family: var(--fontBody);
+  background-color: var(--neutral50);
+  color: var(--neutral900);
+  font-size: var(--bodyMd);
+  line-height: 1.5;
+}
+
+h1,h2,h3{
+  font-family: var(--fontDisplay);
   margin: 0;
 }
 
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
+button{
+  font-family: var(--fontBody);
+  cursor: pointer;
+  border: none;
 }
 
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
-}
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
-}
-p {
-  margin: 0;
+input{
+  font-family: var(--fontBody);
 }
 
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
-}
-
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
+a{
+    color: var(--primary700);
+    text-decoration: none;
 }

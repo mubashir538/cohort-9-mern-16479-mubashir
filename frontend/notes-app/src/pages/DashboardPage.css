@@ -1,0 +1,158 @@
+.DashboardPage{
+    padding: var(--space6) var(--space5);
+    max-width: 75rem;
+    margin: 0 auto;
+  }
+  
+  .DashboardHeader{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space3);
+    margin-bottom: var(--space5);
+  }
+  
+  .DashboardHeaderTitle{
+    font-size: var(--displayMd);
+    font-weight: 800;
+    color: var(--neutral900);
+  }
+  
+  .DashboardWelcome{
+      font-size: var(--bodyMd);
+      color: var(--neutral600);
+      font-weight: 400;
+  }
+  
+  .DashboardHeaderActions{
+    display: flex;
+    align-items: center;
+    gap: var(--space4);
+  }
+  
+  .DashboardProfileLink{
+    color: var(--primary700);
+    font-weight: 600;
+    font-size: var(--bodySm);
+  }
+  
+  .DashboardLogoutButton{
+    background: transparent;
+    border: 0.0625rem solid var(--neutral200);
+    color: var(--neutral700);
+    padding: var(--space2) var(--space4);
+    border-radius: var(--radiusMd);
+    font-size: var(--bodySm);
+    font-weight: 600;
+  }
+  
+  .DashboardLogoutButton:hover{
+    background-color: var(--neutral100);
+  }
+  
+  .DashboardToolbar{
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space3);
+    margin-bottom: var(--space5);
+  }
+  
+  .DashboardSearchInput{
+    flex: 1 1 20rem;
+    padding: var(--space3) var(--space4);
+    border-radius: var(--radiusMd);
+    border: 0.0625rem solid var(--neutral200);
+    font-size: var(--bodyMd);
+    background-color: white;
+  }
+  
+  .DashboardSearchInput:focus{
+    outline: none;
+    border-color: var(--primary300);
+  }
+  
+  .DashboardCreateLink{
+    background-color: var(--primary500);
+    color: white;
+    font-weight: 700;
+    font-size: var(--buttonSize);
+    padding: var(--space3) var(--space5);
+    border-radius: var(--radiusFull);
+    white-space: nowrap;
+  }
+  
+  .DashboardCreateLink:hover{
+    background-color: var(--primary600);
+  }
+  
+  .DashboardError{
+    color: var(--error);
+    background-color: rgba(230,63,51,0.08);
+    padding: var(--space3);
+    border-radius: var(--radiusMd);
+    font-size: var(--bodySm);
+    margin-bottom: var(--space4);
+  }
+  
+  .DashboardLoadingText,.DashboardEmptyText{
+    color: var(--neutral500);
+    font-size: var(--bodyMd);
+    padding: var(--space6) 0;
+    text-align: center;
+  }
+  
+  .DashboardNotesGrid{
+    display: grid;
+    grid-template-columns: repeat(auto-fill,minmax(16rem,1fr));
+    gap: var(--space4);
+  }
+
+  .DashboardWelcomeCard{
+    position: relative;
+    overflow: hidden;
+    background-color: var(--surfaceDark900);
+    border-radius: var(--radiusXl);
+    padding: var(--space6);
+    margin-bottom: var(--space5);
+  }
+  
+  .DashboardWelcomeDotGrid{
+    position: absolute;
+    top: var(--space5);
+    right: var(--space5);
+    display: grid;
+    grid-template-columns: repeat(3,0.5rem);
+    gap: var(--space2);
+    opacity: 0.9;
+  }
+  
+  .DashboardDot{
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: var(--radiusFull);
+    background-color: var(--primary500);
+  }
+  
+  .DashboardWelcomeEyebrow{
+    display: block;
+    font-size: var(--bodySm);
+    font-weight: 600;
+    color: var(--primary400);
+    text-transform: uppercase;
+    letter-spacing: 0.05rem;
+    margin-bottom: var(--space2);
+  }
+  
+  .DashboardWelcomeName{
+    font-size: var(--displayLg);
+    font-weight: 800;
+    color: var(--textOnDark);
+    margin-bottom: var(--space2);
+  }
+  
+  .DashboardWelcomeSub{
+    font-size: var(--bodyMd);
+    color: var(--textOnDarkMuted);
+    max-width: 32rem;
+  }

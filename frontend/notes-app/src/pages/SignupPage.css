@@ -1,0 +1,180 @@
+.SignupPage{
+    min-height: 100vh;
+    display: flex;
+    flex-wrap: wrap;
+  }
+  
+  .SignupLeftPanel{
+    flex: 1 1 45%;
+    background-color: var(--neutral100);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space6);
+    min-height: 30vh;
+  }
+  
+  .SignupBrandText{
+      font-family: var(--fontDisplay);
+      font-weight: 800;
+      font-size: var(--displayMd);
+      color: var(--neutral700);
+  }
+  
+  .SignupDotGrid{
+    position: absolute;
+    bottom: var(--space6);
+    left: var(--space6);
+    display: grid;
+    grid-template-columns: repeat(3,0.6rem);
+    gap: var(--space2);
+  }
+  
+  .SignupDot{
+    width: 0.6rem;
+    height: 0.6rem;
+    border-radius: var(--radiusFull);
+    background-color: var(--primary500);
+  }
+  
+  .SignupRightPanel{
+    flex: 1 1 45%;
+    background-color: var(--surfaceDark900);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space6);
+  }
+  
+  .SignupFormCard{
+    width: 100%;
+    max-width: 26rem;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space4);
+  }
+  
+  .SignupTitle{
+    color: var(--textOnDark);
+    font-size: var(--displayLg);
+    font-weight: 800;
+    margin-bottom: var(--space2);
+  }
+  
+  .SignupError{
+    background-color: rgba(230,63,51,0.12);
+    color: var(--error);
+    padding: var(--space3);
+    border-radius: var(--radiusMd);
+    font-size: var(--bodySm);
+  }
+  
+  .SignupFieldGroup{
+      display: flex;
+      flex-direction: column;
+      gap: var(--space2);
+  }
+  
+  .SignupLabel{
+    color: var(--textOnDarkMuted);
+    font-size: var(--labelSize);
+    font-weight: 600;
+  }
+  
+  .SignupInput{
+    background-color: var(--surfaceDark800);
+    border: 0.0625rem solid var(--surfaceDark700);
+    border-radius: var(--radiusMd);
+    padding: var(--space3) var(--space4);
+    color: var(--textOnDark);
+    font-size: var(--bodyMd);
+    width: 100%;
+  }
+  
+  .SignupInput::placeholder{
+    color: var(--surfaceDark600);
+  }
+  
+  .SignupInput:focus{
+    outline: none;
+    border-color: var(--primary500);
+  }
+  
+  .SignupButton{
+    margin-top: var(--space3);
+    background-color: var(--primary500);
+    color: white;
+    font-size: var(--buttonSize);
+    font-weight: 700;
+    padding: var(--space3) var(--space5);
+    border-radius: var(--radiusFull);
+  }
+  
+  .SignupButton:hover{
+    background-color: var(--primary600);
+  }
+  
+  .SignupButton:disabled{
+    background-color: var(--primary200);
+    cursor: not-allowed;
+  }
+  
+  .SignupFooterText{
+    color: var(--textOnDarkMuted);
+    font-size: var(--bodySm);
+    margin-top: var(--space3);
+  }
+  
+  .SignupFooterLink{
+      color: var(--primary400);
+      font-weight: 600;
+  }
+  
+  @media (max-width: 48em){
+    .SignupLeftPanel{
+      display: none;
+    }
+  }
+
+  .SignupBrandRow{
+    display: flex;
+    align-items: center;
+    gap: var(--space2);
+    color: var(--neutral700);
+    margin-bottom: var(--space6);
+    top: var(--space6);
+    left: var(--space6);
+    position: absolute;
+  
+  }
+  
+  .SignupIllustration{
+    width: 13rem;
+    margin-bottom: var(--space5);
+  }
+  
+  .SignupIllustrationText{
+    color: var(--neutral600);
+    font-size: var(--bodyMd);
+    text-align: center;
+    max-width: 18rem;
+    margin-bottom: var(--space6);
+  }
+  
+  .SignupInputWrapper{
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  
+  .SignupInputIcon{
+    position: absolute;
+    left: var(--space3);
+    color: var(--surfaceDark600);
+  }
+  
+  .SignupInputWrapper .SignupInput{
+    padding-left: 2.5rem;
+  }

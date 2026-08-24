@@ -1,0 +1,94 @@
+.NoteEditorPage{
+    max-width: 48rem;
+    margin: 0 auto;
+    padding: var(--space6) var(--space5);
+  }
+  
+  .NoteEditorTitleInput{
+    width: 100%;
+    border: none;
+    border-bottom: 0.125rem solid var(--neutral200);
+    font-family: var(--fontDisplay);
+    font-size: var(--displayMd);
+    font-weight: 800;
+    color: var(--neutral900);
+    padding: var(--space3) 0;
+    margin-bottom: var(--space4);
+    background: transparent;
+  }
+  
+  .NoteEditorTitleInput:focus{
+    outline: none;
+    border-bottom-color: var(--primary500);
+  }
+  
+  .NoteEditorTitleInput::placeholder{
+    color: var(--neutral400);
+  }
+  
+  .NoteEditorError{
+    color: var(--error);
+    background-color: rgba(230,63,51,0.08);
+    padding: var(--space3);
+    border-radius: var(--radiusMd);
+    font-size: var(--bodySm);
+    margin-bottom: var(--space4);
+  }
+  
+  .NoteEditorContentWrapper{
+    margin-bottom: var(--space5);
+  }
+  
+  .NoteEditorContentWrapper .ql-container{
+    border-radius: 0 0 var(--radiusMd) var(--radiusMd);
+    font-size: var(--bodyMd);
+    min-height: 40vh;
+  }
+  
+  .NoteEditorContentWrapper .ql-toolbar{
+    border-radius: var(--radiusMd) var(--radiusMd) 0 0;
+  }
+  
+  .NoteEditorActions{
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space3);
+  }
+  
+  .NoteEditorCancelButton{
+    background-color: transparent;
+    border: 0.0625rem solid var(--neutral200);
+    color: var(--neutral700);
+    padding: var(--space3) var(--space5);
+    border-radius: var(--radiusFull);
+    font-size: var(--buttonSize);
+    font-weight: 700;
+  }
+  
+  .NoteEditorCancelButton:hover{
+    background-color: var(--neutral100);
+  }
+  
+  .NoteEditorSaveButton{
+    background-color: var(--primary500);
+    color: white;
+    padding: var(--space3) var(--space5);
+    border-radius: var(--radiusFull);
+    font-size: var(--buttonSize);
+    font-weight: 700;
+  }
+  
+  .NoteEditorSaveButton:hover{
+    background-color: var(--primary600);
+  }
+  
+  .NoteEditorSaveButton:disabled{
+    background-color: var(--primary200);
+    cursor: not-allowed;
+  }
+  
+  .NoteEditorLoadingText{
+    color: var(--neutral500);
+    text-align: center;
+    padding: var(--space7) 0;
+  }

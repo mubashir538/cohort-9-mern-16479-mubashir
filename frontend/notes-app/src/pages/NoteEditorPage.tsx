@@ -3,6 +3,7 @@ import {useParams, useNavigate} from 'react-router-dom';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css'
 import {notesApi} from '../api/notes.api';
+import './NoteEditorPage.css';
 
 function NoteEditorPage(){
     const {id} = useParams<{id:string}>();
@@ -62,18 +63,24 @@ function NoteEditorPage(){
     }
 
     return(
-        <div>
+        <div className="NoteEditorPage">
+
             <label htmlFor="note-title"></label>
-            <input id="note-title" type="text" placeholder="Note title" value ={title} onChange={(e)=>setTitle(e.target.value)}/>
-            {error && <p>{error}</p>}
-            
+            <input id="note-title" type="text" className="NoteEditorTitleInput" placeholder="Note title" value ={title} onChange={(e)=>setTitle(e.target.value)}/>
+
+            {error && <p className="NoteEditorError">{error}</p>}
+
                 <label htmlFor="note-content"></label>
+
+                <div className="NoteEditorContentWrapper">
                 <ReactQuill id="note-content" placeholder='Content' area-label="note content" theme="snow" value={content} onChange={setContent}/>
-                <div>
-                    <button onClick={handleCancel}>Cancel</button>
-                    <button onClick={handleSave} disabled={isSaving}>{isSaving?'Saving...':'Save'}</button>
                 </div>
-            
+
+                <div className="NoteEditorActions">
+                    <button onClick={handleCancel} className="NoteEditorCancelButton">Cancel</button>
+                    <button onClick={handleSave} className="NoteEditorSaveButton" disabled={isSaving}>{isSaving?'Saving...':'Save'}</button>
+                </div>
+
         </div>
     );
 }

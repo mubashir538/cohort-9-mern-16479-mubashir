@@ -1,5 +1,8 @@
-import {Link} from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
+import type {MouseEvent} from 'react';
 import type {Note} from '../api/notes.api';
+import {Pencil,Trash2} from 'lucide-react';
+import './NoteCard.css'
 
 interface NoteCardProps {
     note: Note;
@@ -13,16 +16,33 @@ function stripHtml(html:string):string{
 }
 
 function NoteCard({note,onDelete}: NoteCardProps){
-    const preview = stripHtml(note.content).substring(0,120);
+    const navigate = useNavigate();
+    const preview = stripHtml(note.content).substring(0,140);
+
+    function handleCardClick(){
+        navigate(`/notes/${note._id}`);
+    }
+
+    function handleDeleteClick(e:MouseEvent<HTMLButtonElement>){
+        e.stopPropagation();
+        onDelete(note._id);
+    }
 
     return (
-        <div>
-            <Link to={`/notes/${note._id}`}>
-                <h3>{note.title}</h3>
-            </Link>
-            <p>{preview || "No Content yet ..."}</p>
-            <span>{new Date(note.updatedAt).toLocaleDateString()} </span>
-            <button onClick={()=>onDelete(note._id)}>Delete</button>
+        <div className="NoteCard" onClick={handleCardClick}>
+            <h3 className="NoteCardTitle">{note.title || 'Untitled Note'}</h3>
+            <p className="NoteCardPreview">{preview || "No Content yet ..."}</p>
+
+            <div className="NoteCardFooter">
+                <span className="NoteCardDate">{new Date(note.updatedAt).toLocaleDateString()}</span>
+                <div className="NoteCardActions">
+                <button onClick={handleDeleteClick} className="NoteCardDeleteButton">
+                <Trash2 size={15}/>
+                </button>
+                </div>
+
+            </div>
+
         </div>
     );
 }

@@ -3,6 +3,7 @@ import {useState, useCallback,useEffect} from 'react';
 import {Link} from 'react-router-dom';
 import {notesApi,type Note} from '../api/notes.api';
 import NoteCard from '../components/NoteCard';
+import './DashboardPage.css'
 
 function DashboardPage(){
     const {user, logout} = useAuth();
@@ -68,31 +69,52 @@ function DashboardPage(){
     }
 
     return (<>
-    <div>
-    <h1>Dashboard</h1>
-    <h2>Welcome {user?.name}</h2>
-    <Link to={'/profile'}>View Profile</Link>
-    <button onClick={()=> handleLogout()}>Logout</button>
+    <div className="DashboardPage">
+
+    <div className="DashboardHeader">
+        <div>
+    <h1 className="DashboardHeaderTitle">Dashboard</h1>
+        </div>
+
+        <div className="DashboardHeaderActions">
+    <Link to={'/profile'} className="DashboardProfileLink">View Profile</Link>
+    <button onClick={()=> handleLogout()} className="DashboardLogoutButton">Logout</button>
+        </div>
     </div>
-<div>
-<input type="text" placeholder="Search Notes" value={searchTerm} onChange={(e)=> setSearchTerm(e.target.value)}/>
-<Link to={'/notes/new'}>Create New Note</Link>
+
+    <div className="DashboardWelcomeCard">
+
+        <div className="DashboardWelcomeDotGrid">
+            <span className="DashboardDot"></span><span className="DashboardDot"></span><span className="DashboardDot"></span>
+            <span className="DashboardDot"></span><span className="DashboardDot"></span><span className="DashboardDot"></span>
+        </div>
+
+        <span className="DashboardWelcomeEyebrow">Welcome back</span>
+        <h2 className="DashboardWelcomeName">{user?.name}</h2>
+        <p className="DashboardWelcomeSub">
+        {notes.length === 0 ? "You don't have any notes yet, create your first one below" : `You have ${notes.length} note${notes.length===1?'':'s'} saved in your account`}
+        </p>
+
+    </div>
+
+<div className="DashboardToolbar">
+<input type="text" placeholder="Search Notes" className="DashboardSearchInput" value={searchTerm} onChange={(e)=> setSearchTerm(e.target.value)}/>
+<Link to={'/notes/new'} className="DashboardCreateLink">Create New Note</Link>
 </div>
-{error && <p>{error}</p>}
+
+{error && <p className="DashboardError">{error}</p>}
 
 {isLoading?(
-    <p>Loading...</p>
+    <p className="DashboardLoadingText">Loading...</p>
 ):
 ((notes.length === 0)?(
-    <p> {searchTerm? 'No Notes match your Search': 'No Notes Yet  Create a New Note'}</p>
-):(<div>
+    <p className="DashboardEmptyText"> {searchTerm? 'No Notes match your Search': 'No Notes Yet  Create a New Note'}</p>
+):(<div className="DashboardNotesGrid">
     {notes.map((note)=>(<NoteCard key={note._id} note={note} onDelete={handleDelete}/>))}
 </div>)
 )}
-<div>
 
-</div>
-
+    </div>
     </>);
 }
 

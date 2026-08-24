@@ -1,0 +1,110 @@
+.NoteCard{
+    background-color: white;
+    border: 0.0625rem solid var(--neutral200);
+    border-radius: var(--radiusLg);
+    padding: var(--space4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space2);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .NoteCard::before{
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 0.25rem;
+    background-color: var(--primary500);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.2s ease;
+  }
+  
+  .NoteCard:hover{
+    border-color: var(--primary200);
+    box-shadow: 0 0.5rem 1.5rem rgba(23,19,17,0.08);
+    transform: translateY(-0.125rem);
+  }
+  
+  .NoteCard:hover::before{
+    transform: scaleX(1);
+  }
+  
+  .NoteCardTitle{
+    font-size: var(--headingSm);
+    font-weight: 700;
+    color: var(--neutral900);
+  
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  .NoteCardPreview{
+    font-size: var(--bodySm);
+    color: var(--neutral600);
+    line-height: 1.5;
+    min-height: 3.9rem;
+  
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  .NoteCardFooter{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: var(--space2);
+    padding-top: var(--space3);
+    border-top: 0.0625rem solid var(--neutral100);
+  }
+  
+  .NoteCardDate{
+    font-size: var(--bodySm);
+    color: var(--neutral400);
+  }
+  
+  .NoteCardActions{
+    display: flex;
+    align-items: center;
+    gap: var(--space2);
+  }
+  
+  .NoteCardEditButton{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--neutral100);
+    color: var(--neutral600);
+    width: 2rem;
+    height: 2rem;
+    border-radius: var(--radiusFull);
+  }
+  
+  .NoteCardEditButton:hover{
+    background-color: var(--primary100);
+    color: var(--primary700);
+  }
+  
+  .NoteCardDeleteButton{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--neutral100);
+    color: var(--neutral600);
+    width: 2rem;
+    height: 2rem;
+    border-radius: var(--radiusFull);
+  }
+  
+  .NoteCardDeleteButton:hover{
+    background-color: rgba(230,63,51,0.12);
+    color: var(--error);
+  }

@@ -3,6 +3,8 @@ import type {FormEvent} from 'react';
 import {Link, useNavigate} from 'react-router-dom';
 import {useAuth} from '../context/AuthContext';
 import axios from 'axios';
+import {NotebookPen,User,Mail,LockIcon} from 'lucide-react';
+import './SignupPage.css'
 
 function SignupPage(){
     const [email,setEmail] = useState('');
@@ -39,21 +41,74 @@ function SignupPage(){
 
     }
     return (<>
-    <form onSubmit={handleSubmit}>
-        <h1>Signup </h1>
-        {error && <p>{error}</p>}
 
-        <label htmlFor="name">Name</label>
-        <input id="name" type="text" value={name} onChange={(e)=>setName(e.target.value)} required/>
-        <label htmlFor="email">Email</label>
-        <input id="email" type="email" value={email} onChange={(e)=>setEmail(e.target.value)} required/>
-        <label htmlFor="password">Password</label>
-        <input id="password" type="password" value={password} onChange={(e)=>setPassword(e.target.value)} required minLength={8}/>
-        <button type="submit" disabled={isSubmitting}>{isSubmitting ? 'Creating Your Account...' : 'Signup'}</button>
-
-        <p>Already have an account? <Link to="/login">Login</Link></p>
-    </form>
-    </>);
+        <div className="SignupPage">
+    
+            <div className="SignupLeftPanel">
+    
+                <div className="SignupBrandRow">
+                <NotebookPen size={22}/>
+                <span className="SignupBrandText">Notes</span>
+                </div>
+    
+                <div className="SignupIllustration">
+                    <svg viewBox="0 0 220 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="35" y="25" width="120" height="150" rx="14" fill="var(--primary100)"/>
+                    <rect x="60" y="45" width="140" height="150" rx="14" fill="white" stroke="var(--neutral200)" strokeWidth="2"/>
+                    <rect x="80" y="70" width="90" height="10" rx="5" fill="var(--primary400)"/>
+                    <rect x="80" y="92" width="100" height="8" rx="4" fill="var(--neutral200)"/>
+                    <rect x="80" y="108" width="100" height="8" rx="4" fill="var(--neutral200)"/>
+                    <rect x="80" y="124" width="60" height="8" rx="4" fill="var(--neutral200)"/>
+                    <circle cx="170" cy="165" r="22" fill="var(--primary500)"/>
+                    <path d="M162 165 L168 171 L179 158" stroke="white" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                </div>
+    
+                <p className="SignupIllustrationText">All your notes, organised and always with you</p>
+    
+                <div className="SignupDotGrid">
+                    <span className="SignupDot"></span><span className="SignupDot"></span><span className="SignupDot"></span>
+                    <span className="SignupDot"></span><span className="SignupDot"></span><span className="SignupDot"></span>
+                </div>
+            </div>
+    
+        <div className="SignupRightPanel">
+        <form onSubmit={handleSubmit} className="SignupFormCard">
+            <h1 className="SignupTitle">Signup </h1>
+            {error && <p className="SignupError">{error}</p>}
+    
+            <div className="SignupFieldGroup">
+            <label htmlFor="name" className="SignupLabel">Name</label>
+            <div className="SignupInputWrapper">
+            <User size={17} className="SignupInputIcon"/>
+            <input id="name" type="text" className="SignupInput" placeholder="Enter your name" value={name} onChange={(e)=>setName(e.target.value)} required/>
+            </div>
+            </div>
+    
+            <div className="SignupFieldGroup">
+            <label htmlFor="email" className="SignupLabel">Email</label>
+            <div className="SignupInputWrapper">
+            <Mail size={17} className="SignupInputIcon"/>
+            <input id="email" type="email" className="SignupInput" placeholder="Enter your email" value={email} onChange={(e)=>setEmail(e.target.value)} required/>
+            </div>
+            </div>
+    
+            <div className="SignupFieldGroup">
+            <label htmlFor="password" className="SignupLabel">Password</label>
+            <div className="SignupInputWrapper">
+            <LockIcon size={17} className="SignupInputIcon"/>
+            <input id="password" type="password" className="SignupInput" placeholder="Enter your password" value={password} onChange={(e)=>setPassword(e.target.value)} required minLength={8}/>
+            </div>
+            </div>
+    
+            <button type="submit" className="SignupButton" disabled={isSubmitting}>{isSubmitting ? 'Creating Your Account...' : 'Signup'}</button>
+    
+            <p className="SignupFooterText">Already have an account? <Link to="/login" className="SignupFooterLink">Login</Link></p>
+        </form>
+        </div>
+    
+        </div>
+        </>);
 }
 
 
