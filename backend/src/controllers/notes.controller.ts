@@ -51,11 +51,19 @@ const getNoteById = asyncHandler(async (req:Request<NoteParams>, res:Response) =
 });
 
 const  updateNote = asyncHandler(async (req:Request<NoteParams,{},UpdateNoteBody>, res:Response) => {
-    const {title,content} = req.body;
-    
-    if (title !== undefined && (typeof title !== 'string' || title.trim().length === 0)) {
-         throw new AppError('Title is Required', 400, "TITLE_REQUIRED");
-     }
+
+const {title,content} = req.body;
+
+if (title === undefined && content === undefined) {
+    throw new AppError(
+        'At least one of title or content is required',
+        400,
+        'NO_UPDATE_FIELDS'
+    );
+}
+  if((typeof title !== 'string' || title.trim().length === 0) && title !== undefined){
+        throw new AppError('Title is Required', 400, "TITLE_REQUIRED");
+    }
 
     if (typeof content !== 'string' && typeof content !== 'undefined'){
         throw new AppError('Content is Must be String', 400, 'INVALID_CONTENT');
