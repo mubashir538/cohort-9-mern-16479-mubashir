@@ -1,19 +1,48 @@
 import {Note } from '../models';
 import type {INote} from '../models/note.model';
+import type {SortOption} from '../validators/notes.validator';
 import AppError from '../utils/Errors';
 import logger from '../config/logger';
 import { Types } from 'mongoose';
-import { log } from 'node:console';
 
-   const MAX_LENGTH = 100;
-    const escapeRegex = (value:string):string =>{
-        return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+function tokenizedSearch(term:string):string[] {
+    const Words = term.trim().split(/[^a-zA-Z0-9]+/).filter(Boolean);
+    const tokens: string[] = [];
+
+    for (const word of Words) {
+        const spaced = word
+            .replace(/([a-z])([A-Z])/g, '$1 $2')
+            .replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2')
+            .replace(/([a-zA-Z])([0-9])/g, '$1 $2')
+            .replace(/([0-9])([a-zA-Z])/g, '$1 $2');
+
+        tokens.push(...spaced.split(' '));
     }
+    return Array.from(new Set(tokens.filter((t) => t.length > 0)));
+}
 
-async function createNote(userId: string, title: string, content?: string): Promise<INote> {
+
+function buildSortPage(sort? : SortOption): Record<string, 1 |-1>{
+    const [field, direction] = (sort ?? 'updatedAt_desc').split('_');
+  return {
+    isPinned: -1,
+    [field]: direction === 'asc' ? 1 : -1,
+  };
+}
+
+interface CreateNoteOptions {
+    isPinned?: boolean;
+    highlightColor?: string | null;
+  }
+
+
+
+async function createNote(userId: string, title: string, content?: string, options: CreateNoteOptions = {}): Promise<INote> {
     try{
 
-        const note = await Note.create({ userId, title, content: content ?? '' });
+        const note = await Note.create({ userId, title, content: content ?? '', isPinned: options.isPinned ?? false, highlightColor: options.highlightColor ?? null });
+
         logger.info({userId,noteId: note._id.toString()},'Note created successfully');
         return note;
     }catch(error){
@@ -21,28 +50,35 @@ async function createNote(userId: string, title: string, content?: string): Prom
         throw new AppError('Failed to create Note',500,'NOTE_CREATE_FAILED');
 
     }
-
-
 }
 
+interface GetAllNotesOptions {
+    searchTerm?: string;
+    sort?: SortOption;
+  }
 
-async function getAllNotes(userId: string, searchQuery?: string): Promise<INote[]> {
-    const filter : Record<string,unknown> = {userId};
+
+async function getAllNotes(userId: string, options: GetAllNotesOptions = {}): Promise<INote[]> {
+    const {searchTerm, sort} = options;
+    let filter : Record<string,unknown> = {userId};
     
 
-    if(searchQuery){
+    if(searchTerm){
+        const tokens = tokenizedSearch(searchTerm);
 
-        if(searchQuery.length > MAX_LENGTH){
-            throw new AppError('Search query is too long', 400, "SEARCH_QUERY_TOO_LONG");
+        if (tokens.length > 0){
+            filter = {
+                ...filter,
+                $or: tokens.flatMap((token) => [
+                    {title: {$regex: token, $options: 'i'}},
+                    {content: {$regex: token, $options: 'i'}},
+                ]),
+            }
         }
-        const escapedSearch = escapeRegex(searchQuery);
-        filter.$or = [
-            {title: {$regex: escapedSearch, $options: 'i'}},
-            {content: {$regex: escapedSearch, $options: 'i'}},
-        ];
     }
 
-    const notes = await Note.find(filter).sort({updatedAt: -1});
+    const sortPage = buildSortPage(sort)
+    const notes = Note.find(filter).sort(sortPage);
     return notes;
 }
 
@@ -64,6 +100,8 @@ async function getNotebyId(userId:string, noteId:string):Promise<INote> {
 interface NoteUpdate{
     title?: string;
     content?: string;
+    isPinned?: boolean;
+    highlightColor?: string | null;
 }
 
 async function updateNote(userId:string, noteId:string, update: NoteUpdate):Promise<INote> {
@@ -76,6 +114,12 @@ async function updateNote(userId:string, noteId:string, update: NoteUpdate):Prom
     }
     if(update.content !== undefined){
         note.content = update.content;
+    }
+    if(update.isPinned !== undefined){
+        note.isPinned = update.isPinned;
+    }
+    if(update.highlightColor !== undefined){
+        note.highlightColor = update.highlightColor;
     }
 
     try{
