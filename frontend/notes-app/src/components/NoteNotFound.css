@@ -1,0 +1,81 @@
+.NoteNotFound {
+    min-height: 60vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: var(--space2);
+    padding: var(--space6);
+    }
+
+    .NoteNotFoundIconWrapper{
+    width: 5rem;
+    height: 5rem;
+    border-radius: var(--radiusFull);
+    background-color: var(--primary50);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--space3);
+    }
+
+    .NoteNotFoundIcon{
+    color: var(--primary500);
+    }
+
+    .NoteNotFoundEyebrow{
+    font-size: var(--bodySm);
+    font-weight: 700;
+    letter-spacing: 0.05rem;
+    color: var(--primary600);
+    text-transform: uppercase;
+    }
+
+    .NoteNotFoundTitle {
+    font-family: var(--fontDisplay);
+    font-size: var(--displayLg);
+    font-weight: 800;
+    color: var(--neutral900);
+    margin: 0;
+    }
+
+    .NoteNotFoundText {
+    color: var(--neutral500);
+    font-size: var(--bodyMd);
+    margin: 0;
+    max-width: 26rem;
+    }
+
+    .NoteNotFoundDotGrid{
+    display: grid;
+    grid-template-columns: repeat(3,0.5rem);
+    gap: var(--space2);
+    margin: var(--space2) 0;
+    opacity: 0.6;
+    }
+
+    .NoteNotFoundDot{
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: var(--radiusFull);
+    background-color: var(--primary500);
+    }
+
+    .NoteNotFoundLink {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space2);
+    margin-top: var(--space3);
+    padding: var(--space3) var(--space5);
+    background-color: var(--primary500);
+    color: white;
+    border-radius: var(--radiusFull);
+    text-decoration: none;
+    font-weight: 700;
+    font-size: var(--buttonSize);
+    }
+
+    .NoteNotFoundLink:hover {
+    background-color: var(--primary600);
+    }

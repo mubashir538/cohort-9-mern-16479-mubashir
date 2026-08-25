@@ -156,3 +156,22 @@
     color: var(--textOnDarkMuted);
     max-width: 32rem;
   }
+
+  .DashboardSortSelect {
+    padding: 0.6rem 0.9rem;
+    border-radius: 0.75rem;
+        border: 0.0625rem solid #e9e4e2;
+    background-color: #fff;
+    font-size: 0.9rem;
+    font-family: 'Inter', sans-serif;
+        color: #171311;
+    }
+
+    .DashboardVisuallyHidden {
+        position: absolute;
+        width: 0.0625rem;
+        height: 0.0625rem;
+        overflow: hidden;
+        clip: rect(0,0,0,0);
+        white-space: nowrap;
+    }

@@ -1,7 +1,7 @@
 import {useAuth} from '../context/AuthContext';
 import {useState, useCallback,useEffect} from 'react';
 import {Link} from 'react-router-dom';
-import {notesApi,type Note} from '../api/notes.api';
+import {notesApi,type Note,type SortOption} from '../api/notes.api';
 import NoteCard from '../components/NoteCard';
 import './DashboardPage.css'
 
@@ -10,15 +10,16 @@ function DashboardPage(){
 
     const [notes,setNotes] = useState<Note[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
+    const [sortOption,setSortOption] = useState<SortOption>('updatedAt_desc');
     const [isLoading,setIsLoading] = useState(true);
     const [error,setError] = useState('');
 
 
-    const fetchNotes=   useCallback(async (search: string,signal:AbortSignal)=> {
+    const fetchNotes=   useCallback(async (search: string,sort:SortOption,signal:AbortSignal)=> {
         setIsLoading(true);
         setError('');
         try{
-            const response = await notesApi.getAll(search);
+            const response = await notesApi.getAll({search,sort},signal);
             setNotes(response.data.data.notes);
         }
         catch(err){
@@ -37,14 +38,14 @@ function DashboardPage(){
         const controller = new AbortController();
 
         const timeoutId = setTimeout(() => {
-            fetchNotes(searchTerm,controller.signal);
+            fetchNotes(searchTerm,sortOption,controller.signal);
         },400);
         return () => {
             clearTimeout(timeoutId);
             controller.abort();
 
         }
-    },[searchTerm,fetchNotes]);
+    },[searchTerm,sortOption,fetchNotes]);
 
 
     async function handleDelete(noteId: string){
@@ -54,9 +55,20 @@ function DashboardPage(){
         try{
             await notesApi.delete(noteId);
             setNotes((prev)=> prev.filter((n)=> n._id !== noteId));
-            await fetchNotes(searchTerm,new AbortController().signal);
         }catch(err){
             setError('Failed to delete note');
+        }
+    }
+
+    async function handleTogglePin(noteId:string, isPinned:boolean){
+        setNotes((prev)=> prev.map((n)=> n._id===noteId ? {...n, isPinned} : n));
+
+        try{
+            await notesApi.togglePin(noteId,isPinned);
+            await fetchNotes(searchTerm,sortOption,new AbortController().signal);
+        }catch(err){
+            setError('Failed to update pin');
+            setNotes((prev)=> prev.map((n)=> n._id===noteId ? {...n, isPinned: !isPinned} : n));
         }
     }
 
@@ -98,8 +110,17 @@ function DashboardPage(){
     </div>
 
 <div className="DashboardToolbar">
-    <label htmlFor="search-notes">Search Notes</label>
+    <label htmlFor="search-notes" className="DashboardVisuallyHidden">Search Notes</label>
 <input id="search-notes" type="text" placeholder="Search Notes" className="DashboardSearchInput" value={searchTerm} onChange={(e)=> setSearchTerm(e.target.value)}/>
+<label htmlFor="sort-notes" className="DashboardVisuallyHidden">Sort By</label>
+    <select id="sort-notes" className="DashboardSortSelect" value={sortOption} onChange={(e)=> setSortOption(e.target.value as SortOption)}>
+        <option value="updatedAt_desc">Recently Updated</option>
+        <option value="updatedAt_asc">Oldest Updated</option>
+        <option value="createdAt_desc">Newest</option>
+        <option value="createdAt_asc">Oldest</option>
+        <option value="title_asc">Title A-Z</option>
+        <option value="title_desc">Title Z-A</option>
+    </select>
 <Link to={'/notes/new'} className="DashboardCreateLink">Create New Note</Link>
 </div>
 
@@ -111,7 +132,7 @@ function DashboardPage(){
 ((notes.length === 0)?(
     <p className="DashboardEmptyText"> {searchTerm? 'No Notes match your Search': 'No Notes Yet  Create a New Note'}</p>
 ):(<div className="DashboardNotesGrid">
-    {notes.map((note)=>(<NoteCard key={note._id} note={note} onDelete={handleDelete}/>))}
+        {notes.map((note)=>(<NoteCard key={note._id} note={note} onDelete={handleDelete} onTogglePin={handleTogglePin}/>))}
 </div>)
 )}
 

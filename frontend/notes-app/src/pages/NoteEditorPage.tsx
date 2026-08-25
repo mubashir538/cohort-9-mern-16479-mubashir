@@ -4,6 +4,10 @@ import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css'
 import {notesApi} from '../api/notes.api';
 import './NoteEditorPage.css';
+import {Pin} from 'lucide-react';
+import {PRESET_HIGHLIGHT_COLORS} from '../utils/colorUtils';
+import NoteNotFound from '../components/NoteNotFound';
+import axios from 'axios';
 
 function NoteEditorPage(){
     const {id} = useParams<{id:string}>();
@@ -12,10 +16,14 @@ function NoteEditorPage(){
 
     const [title,setTitle] = useState('');
     const [content,setContent] = useState('');
+    const [isPinned,setIsPinned] = useState(false);
+    const [highlightColor,setHighlightColor] = useState<string|null>(null);
     const [isLoading, setIsLoading] = useState(isEditMode);
     const [isSaving, setIsSaving] = useState(false);
     const [error, setError] = useState('');
-    const quillRef = useRef<ReactQuill>(null)
+    const [notFound,setNotFound] = useState(false);
+
+    const quillRef = useRef<ReactQuill>(null);
 
     useEffect(()=> {
         if(!isEditMode || !id) return;
@@ -24,8 +32,14 @@ function NoteEditorPage(){
             const note = response.data.data.note;
             setTitle(note.title);
             setContent(note.content);
-        }).catch(()=>{
-            setError('Failed to load note');
+            setIsPinned(note.isPinned);
+            setHighlightColor(note.highlightColor);
+        }).catch((err)=>{
+            if(axios.isAxiosError(err) && err.response?.status === 404){
+                setNotFound(true);
+            }else{
+                setError('Failed to load note');
+            }
         }).finally(()=>{
             setIsLoading(false);
         })
@@ -38,6 +52,9 @@ function NoteEditorPage(){
             }
     },[])
 
+    function handleTogglePin(){
+        setIsPinned((prev)=> !prev);
+    }
     async function handleSave(){
         if(!title.trim()){
             setError('Title is required');
@@ -48,9 +65,9 @@ function NoteEditorPage(){
 
         try{
             if(isEditMode && id){
-                await notesApi.update(id,title,content);
+                await notesApi.update(id,{title,content,isPinned,highlightColor});
             }else{
-                await notesApi.create(title,content);
+                await notesApi.create(title,content,{isPinned,highlightColor});
             }
             navigate('/dashboard');
         }catch(err:any){
@@ -65,19 +82,48 @@ function NoteEditorPage(){
         navigate('/dashboard');
     }
 
+    if(notFound){
+        return <NoteNotFound/>
+    }
+
     if(isLoading){
         return <p>Loading note...</p>
     }
 
     return(
         <div className="NoteEditorPage">
-
-            <label htmlFor="note-title">Title</label>
+            <div className="NoteEditorTopRow">
+            <label htmlFor="note-title" className="NoteEditorVisuallyHidden">Title</label>
             <input id="note-title" type="text"  className="NoteEditorTitleInput" placeholder="Note title" value ={title} onChange={(e)=>setTitle(e.target.value)}/>
 
+
+            <button type="button" onClick={handleTogglePin} className={isPinned ? "NoteEditorPinButton NoteEditorPinButtonActive" : "NoteEditorPinButton"} aria-label={isPinned ? "Unpin note" : "Pin note"}>
+            <Pin size={16} fill={isPinned ? "currentColor" : "none"}/>
+                {isPinned ? 'Pinned' : 'Pin'}
+            </button>   
+            </div>
+            <div className="NoteEditorHighlightRow">
+                 <span className="NoteEditorHighlightLabel">Highlight</span>
+
+                <button type="button" onClick={()=> setHighlightColor(null)} className={highlightColor === null ? "NoteEditorColorSwatch NoteEditorColorSwatchNone NoteEditorColorSwatchActive" : "NoteEditorColorSwatch NoteEditorColorSwatchNone"} aria-label="No highlight" />
+                {PRESET_HIGHLIGHT_COLORS.map((colorOption)=> (
+
+                    <button key={colorOption.hex} type="button" onClick={()=> setHighlightColor(colorOption.hex)} className={highlightColor === colorOption.hex ? "NoteEditorColorSwatch NoteEditorColorSwatchActive" : "NoteEditorColorSwatch"} style={{backgroundColor: colorOption.hex}} aria-label={colorOption.name}/>
+
+                ))}
+
+                <input
+                    type="color"
+                    value={highlightColor ?? '#ffffff'}
+                    onChange={(e)=> setHighlightColor(e.target.value)}
+                    className="NoteEditorColorCustomInput"
+                    aria-label="Custom highlight color"
+                />
+
+            </div>
             {error && <p className="NoteEditorError">{error}</p>}
 
-                <label htmlFor="note-content">Content</label>
+                <label htmlFor="note-content" className="NoteEditorVisuallyHidden">Content</label>
 
                 <div className="NoteEditorContentWrapper">
                 <ReactQuill id="note-content" placeholder='Content' area-label="note content" theme="snow" value={content} onChange={setContent}/>

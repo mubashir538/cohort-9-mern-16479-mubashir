@@ -120,3 +120,24 @@
     outline-offset: 0.25rem;
     border-radius: 0.5rem;
 }
+
+.NoteCardPinned {
+  border-left: 0.25rem solid #fb5743;
+  }
+  
+  .NoteCardPinButton {
+      background: none;
+  border: none;
+  color: #fff;
+      cursor: pointer;
+  display: flex;
+      align-items: center;
+  }
+  
+  .NoteCardPinButtonActive {
+  color: #fb5743;
+  }
+  
+  .NoteCardPinButton:hover {
+      color: #fb5743;
+  }
