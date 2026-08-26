@@ -19,6 +19,7 @@ function DashboardPage(): ReactElement{
     const listAbortControllerRef = useRef<AbortController | null>(null);
     const searchTermRef = useRef(searchTerm);
     const sortOptionRef = useRef(sortOption);
+    const debounceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
 
     useEffect(() => {
@@ -61,11 +62,15 @@ function DashboardPage(): ReactElement{
         listAbortControllerRef.current?.abort();
         listAbortControllerRef.current = controller;
 
-        const timeoutId = setTimeout(() => {
+        debounceTimeoutRef.current = setTimeout(() => {
+            debounceTimeoutRef.current = null;
             fetchNotes(searchTerm,sortOption,controller.signal);
         },400);
         return () => {
-            clearTimeout(timeoutId);
+            if (debounceTimeoutRef.current !== null) {
+                clearTimeout(debounceTimeoutRef.current);
+                debounceTimeoutRef.current = null;
+            }
             controller.abort();
             if (listAbortControllerRef.current === controller) {
                 listAbortControllerRef.current = null;
@@ -99,6 +104,10 @@ function DashboardPage(): ReactElement{
                 return;
             }
             listRequestIdRef.current++;
+            if (debounceTimeoutRef.current !== null) {
+                clearTimeout(debounceTimeoutRef.current);
+                debounceTimeoutRef.current = null;
+            }
             listAbortControllerRef.current?.abort();
             const refreshController = new AbortController();
             listAbortControllerRef.current = refreshController;
