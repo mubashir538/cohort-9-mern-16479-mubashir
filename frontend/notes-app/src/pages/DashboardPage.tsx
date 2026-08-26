@@ -1,11 +1,11 @@
 import {useAuth} from '../context/AuthContext';
-import {useState, useCallback,useEffect,useRef} from 'react';
+import {useState, useCallback,useEffect,useRef, type ReactElement} from 'react';
 import {Link} from 'react-router-dom';
 import {notesApi,type Note,type SortOption} from '../api/notes.api';
 import NoteCard from '../components/NoteCard';
 import './DashboardPage.css'
 
-function DashboardPage(){
+function DashboardPage(): ReactElement{
     const {user, logout} = useAuth();
 
     const [notes,setNotes] = useState<Note[]>([]);
@@ -14,11 +14,22 @@ function DashboardPage(){
     const [isLoading,setIsLoading] = useState(true);
     const [error,setError] = useState('');
     const [pendingPinIds,setPendingPinIds] = useState<Set<string>>(new Set());
-    const pinRequestIdRef = useRef<Record<string,number>>({});
+    const pinRequestIdRef = useRef<Record<string, number>>({});
     const listRequestIdRef = useRef(0);
+    const listAbortControllerRef = useRef<AbortController | null>(null);
+    const searchTermRef = useRef(searchTerm);
+    const sortOptionRef = useRef(sortOption);
 
 
-    const fetchNotes=   useCallback(async (search: string,sort:SortOption,signal:AbortSignal)=> {
+    useEffect(() => {
+        searchTermRef.current = searchTerm;
+    }, [searchTerm]);
+    
+    useEffect(() => {
+        sortOptionRef.current = sortOption;
+    }, [sortOption]);
+
+    const fetchNotes=   useCallback(async (search: string,sort:SortOption,signal:AbortSignal): Promise<void> => {
         const requestId = ++listRequestIdRef.current;
         setIsLoading(true);
         setError('');
@@ -47,18 +58,24 @@ function DashboardPage(){
     useEffect(()=>{
         const controller = new AbortController();
 
+        listAbortControllerRef.current?.abort();
+        listAbortControllerRef.current = controller;
+
         const timeoutId = setTimeout(() => {
             fetchNotes(searchTerm,sortOption,controller.signal);
         },400);
         return () => {
             clearTimeout(timeoutId);
             controller.abort();
+            if (listAbortControllerRef.current === controller) {
+                listAbortControllerRef.current = null;
+            }
 
         }
     },[searchTerm,sortOption,fetchNotes]);
 
 
-    async function handleDelete(noteId: string){
+    async function handleDelete(noteId: string): Promise<void>{
         const confirmed = window.confirm('Are you sure you want to delete this note?');
         if (!confirmed) return;
 
@@ -70,7 +87,7 @@ function DashboardPage(){
         }
     }
 
-    async function handleTogglePin(noteId:string, isPinned:boolean){
+    async function handleTogglePin(noteId:string, isPinned:boolean): Promise<void>{
         const requestId = (pinRequestIdRef.current[noteId] ?? 0) + 1;
         pinRequestIdRef.current[noteId] = requestId;
         setNotes((prev)=> prev.map((n)=> n._id===noteId ? {...n, isPinned} : n));
@@ -81,7 +98,11 @@ function DashboardPage(){
             if(pinRequestIdRef.current[noteId] !== requestId){
                 return;
             }
-            await fetchNotes(searchTerm,sortOption,new AbortController().signal);
+            listRequestIdRef.current++;
+            listAbortControllerRef.current?.abort();
+            const refreshController = new AbortController();
+            listAbortControllerRef.current = refreshController;
+            await fetchNotes(searchTermRef.current,sortOptionRef.current,refreshController.signal);
         }catch(err){
             if(pinRequestIdRef.current[noteId] !== requestId){
                 return;
@@ -100,7 +121,7 @@ function DashboardPage(){
         }
     }
 
-     async function handleLogout() {
+     async function handleLogout(): Promise<void> {
         try {
             await logout();
         } catch {
