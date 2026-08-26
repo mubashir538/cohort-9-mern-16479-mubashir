@@ -71,10 +71,8 @@ function DashboardPage(): ReactElement{
                 clearTimeout(debounceTimeoutRef.current);
                 debounceTimeoutRef.current = null;
             }
-            controller.abort();
-            if (listAbortControllerRef.current === controller) {
-                listAbortControllerRef.current = null;
-            }
+            listAbortControllerRef.current?.abort();
+            listAbortControllerRef.current = null;
 
         }
     },[searchTerm,sortOption,fetchNotes]);
