@@ -19,7 +19,8 @@ function tokenizedSearch(term:string):string[] {
 
         tokens.push(...spaced.split(' '));
     }
-    return Array.from(new Set(tokens.filter((t) => t.length > 0)));
+    const uniqueTokens = Array.from(new Set(tokens.filter((t) => t.length > 0)));
+    return uniqueTokens.slice(0, 10);
 }
 
 

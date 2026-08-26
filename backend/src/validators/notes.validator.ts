@@ -28,9 +28,10 @@ export const sortOptionSchema = z.enum([
 ]);
 
 export const notesQuerySchema = z.object({
-    search : z.string().trim().optional(),
-    sort : sortOptionSchema.optional(),
+    search : z.string().trim().max(100, 'Search must be 100 characters or fewer').optional(),
+    sort: sortOptionSchema.optional(),
 });
+
 
 export type CreateNoteInput = z.infer<typeof createNoteSchema>;
 export type UpdateNoteInput = z.infer<typeof updateNoteSchema>;

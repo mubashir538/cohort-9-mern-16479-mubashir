@@ -28,6 +28,10 @@ function NoteEditorPage(){
     useEffect(()=> {
         if(!isEditMode || !id) return;
 
+        setIsLoading(true);
+        setNotFound(false);
+        setError('');
+
         notesApi.getbyId(id).then((response)=>{
             const note = response.data.data.note;
             setTitle(note.title);

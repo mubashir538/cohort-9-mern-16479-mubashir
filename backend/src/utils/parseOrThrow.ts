@@ -5,7 +5,7 @@ function parseOrThrow<T>(schema: ZodSchema<T>, data: unknown): T {
     const result = schema.safeParse(data);
 
     if (!result.success) {
-        const message = result.error.issues.map((issue: any) => issue.message).join(', ');
+        const message = result.error.issues.map(({ message }) => message).join(', ');
         throw new AppError(message, 400, 'VALIDATION_ERROR');
     }
 

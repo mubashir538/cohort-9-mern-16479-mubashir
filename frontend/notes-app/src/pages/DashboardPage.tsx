@@ -1,5 +1,5 @@
 import {useAuth} from '../context/AuthContext';
-import {useState, useCallback,useEffect} from 'react';
+import {useState, useCallback,useEffect,useRef} from 'react';
 import {Link} from 'react-router-dom';
 import {notesApi,type Note,type SortOption} from '../api/notes.api';
 import NoteCard from '../components/NoteCard';
@@ -13,6 +13,8 @@ function DashboardPage(){
     const [sortOption,setSortOption] = useState<SortOption>('updatedAt_desc');
     const [isLoading,setIsLoading] = useState(true);
     const [error,setError] = useState('');
+    const [pendingPinIds,setPendingPinIds] = useState<Set<string>>(new Set());
+    const pinRequestIdRef = useRef<Record<string,number>>({});
 
 
     const fetchNotes=   useCallback(async (search: string,sort:SortOption,signal:AbortSignal)=> {
@@ -61,14 +63,32 @@ function DashboardPage(){
     }
 
     async function handleTogglePin(noteId:string, isPinned:boolean){
+        const requestId = (pinRequestIdRef.current[noteId] ?? 0) + 1;
+        pinRequestIdRef.current[noteId] = requestId;
         setNotes((prev)=> prev.map((n)=> n._id===noteId ? {...n, isPinned} : n));
+        setPendingPinIds((prev)=> new Set(prev).add(noteId));
 
         try{
             await notesApi.togglePin(noteId,isPinned);
+            if(pinRequestIdRef.current[noteId] !== requestId){
+                return;
+            }
             await fetchNotes(searchTerm,sortOption,new AbortController().signal);
         }catch(err){
+            if(pinRequestIdRef.current[noteId] !== requestId){
+                return;
+            }
             setError('Failed to update pin');
             setNotes((prev)=> prev.map((n)=> n._id===noteId ? {...n, isPinned: !isPinned} : n));
+        }
+        finally{
+            if(pinRequestIdRef.current[noteId] === requestId){
+                setPendingPinIds((prev)=>{
+                    const next = new Set(prev);
+                    next.delete(noteId);
+                    return next;
+                });
+            }   
         }
     }
 
@@ -132,7 +152,7 @@ function DashboardPage(){
 ((notes.length === 0)?(
     <p className="DashboardEmptyText"> {searchTerm? 'No Notes match your Search': 'No Notes Yet  Create a New Note'}</p>
 ):(<div className="DashboardNotesGrid">
-        {notes.map((note)=>(<NoteCard key={note._id} note={note} onDelete={handleDelete} onTogglePin={handleTogglePin}/>))}
+        {notes.map((note)=>(<NoteCard key={note._id} note={note} onDelete={handleDelete} onTogglePin={handleTogglePin} isPinning={pendingPinIds.has(note._id)}/>))}
 </div>)
 )}
 

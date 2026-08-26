@@ -9,6 +9,7 @@ interface NoteCardProps {
     note: Note;
     onDelete: (id:string)=>void;
     onTogglePin: (id:string, isPinned:boolean)=>void;
+    isPinning: boolean;
 }
 
 function stripHtml(html:string):string{
@@ -17,7 +18,7 @@ function stripHtml(html:string):string{
     return temp.textContent||temp.innerText||"";    
 }
 
-function NoteCard({note,onDelete,onTogglePin}: NoteCardProps){
+function NoteCard({note,onDelete,onTogglePin,isPinning}: NoteCardProps){
     const preview = stripHtml(note.content).substring(0,140);
     const textColor = note.highlightColor ? getContrastTextColor(note.highlightColor) : undefined;
 
@@ -43,7 +44,7 @@ function NoteCard({note,onDelete,onTogglePin}: NoteCardProps){
             <div className="NoteCardFooter" style={{borderTopColor: textColor}}>
                 <span className="NoteCardDate" style={{color: textColor}}>{new Date(note.updatedAt).toLocaleDateString()}</span>
                 <div className="NoteCardActions" style={{color: textColor}}>
-                <button onClick={handlePinClick} className={note.isPinned ? "NoteCardPinButton NoteCardPinButtonActive" : "NoteCardPinButton"}  aria-label={note.isPinned ? "Unpin note" : "Pin note"}>
+                <button onClick={handlePinClick} disabled={isPinning} className={note.isPinned ? "NoteCardPinButton NoteCardPinButtonActive" : "NoteCardPinButton"}  aria-label={note.isPinned ? "Unpin note" : "Pin note"}>
                 <Pin size={15} fill={note.isPinned ? "currentColor" : textColor} stroke={note.isPinned ? "none" : textColor}/>
                 </button>
                 <button onClick={handleDeleteClick} className="NoteCardDeleteButton" aria-label="Delete note">

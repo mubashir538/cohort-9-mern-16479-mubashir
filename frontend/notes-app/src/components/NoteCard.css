@@ -128,7 +128,7 @@
   .NoteCardPinButton {
       background: none;
   border: none;
-  color: #fff;
+  color: inherit;
       cursor: pointer;
   display: flex;
       align-items: center;
@@ -141,3 +141,7 @@
   .NoteCardPinButton:hover {
       color: #fb5743;
   }
+  .NoteCardPinButton:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    }

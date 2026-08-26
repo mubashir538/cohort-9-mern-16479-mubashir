@@ -31,6 +31,7 @@ function LoginPage(){
             setEmailError(emailValidationError);
             return;
         }
+        setIsSubmitting(true);
         try{
             await login(email,password);
             navigate('/dashboard');
@@ -98,6 +99,7 @@ function LoginPage(){
           className="LoginInput"
           placeholder="you@example.com"
           value={email}
+          onBlur={handleEmailBlur}
           onChange={(e) => setEmail(e.target.value)}
           required
         />
