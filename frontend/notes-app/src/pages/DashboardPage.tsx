@@ -15,22 +15,30 @@ function DashboardPage(){
     const [error,setError] = useState('');
     const [pendingPinIds,setPendingPinIds] = useState<Set<string>>(new Set());
     const pinRequestIdRef = useRef<Record<string,number>>({});
+    const listRequestIdRef = useRef(0);
 
 
     const fetchNotes=   useCallback(async (search: string,sort:SortOption,signal:AbortSignal)=> {
+        const requestId = ++listRequestIdRef.current;
         setIsLoading(true);
         setError('');
         try{
             const response = await notesApi.getAll({search,sort},signal);
+            if(requestId !== listRequestIdRef.current){
+                return;
+            }
             setNotes(response.data.data.notes);
         }
         catch(err){
             if(signal.aborted){
                 return;
             }
+            if(requestId !== listRequestIdRef.current){
+                return;
+            }
             setError('Can not Load Notes');
         }finally{
-            if(!signal.aborted){
+            if(!signal.aborted && requestId === listRequestIdRef.current){
                 setIsLoading(false);
             }
         }
