@@ -2,52 +2,38 @@ import {Request,Response} from 'express';
 import  authService  from '../services/auth.service';
 import asyncHandler from '../utils/asyncHandler';
 import  AppError from '../utils/Errors';
-
-interface signupBody{
-    name: string;
-    email: string;
-    password: string;
-}
-
-interface loginBody{
-    email: string;
-    password: string;
-}
+import ms from 'ms';
+import { signupSchema, loginSchema } from '../validators/auth.validator';
+import type { SignupInput, LoginInput } from '../validators/auth.validator';
+import parseOrThrow from '../utils/parseOrThrow';
 
 
 const isProduction = process.env.NODE_ENV === 'production';
 
 function setTokenCookie(res:Response, token: string): void {
+    const expiry = process.env.JWT_EXPIRY || '7d';
     res.cookie('token', token, {
         httpOnly: true,
         secure: isProduction,
         sameSite: 'lax',
-        maxAge: 1000 * 60 * 60 * 24 * 7,
+        maxAge: ms(expiry as ms.StringValue),
 
     })
 }
 
 
-const signup = asyncHandler(async (req:Request<{}, {}, signupBody>, res:Response) => {
-    const {name,email,password} = req.body;
-
-    if (!name || !email || !password){
-        throw new AppError('Missing required fields', 400, "MISSING_FIELDS");
-    }
+const signup = asyncHandler(async (req:Request<{}, {}, SignupInput>, res:Response) => {
+    const {name,email,password} = parseOrThrow(signupSchema, req.body);
 
     const result = await authService.signup(name,email,password);
 
-  setTokenCookie(res, result.token);
+    setTokenCookie(res, result.token);
 
     res.status(201).json({success: true, data: {user: result.user}});
 });
 
-const login = asyncHandler(async (req:Request<{}, {}, loginBody>, res:Response) => {
-    const {email,password} = req.body;
-
-    if (!email || !password){
-        throw new AppError('Missing required fields', 400, "MISSING_FIELDS");
-    }
+const login = asyncHandler(async (req:Request<{}, {}, LoginInput>, res:Response) => {
+    const {email,password} = parseOrThrow(loginSchema, req.body);
 
     const result = await authService.login(email,password);
     setTokenCookie(res, result.token);

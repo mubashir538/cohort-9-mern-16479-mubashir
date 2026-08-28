@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken';
 import AppError from "../utils/Errors";
 import logger from "../config/logger";
 
-const SALT_ROUNDS =  3;
+const SALT_ROUNDS =  12;
 
 interface AuthResult{
     token:string,
