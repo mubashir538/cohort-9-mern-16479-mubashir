@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken';
 import AppError from "../utils/Errors";
 import logger from "../config/logger";
 
-const SALT_ROUNDS =  12;
+const SALT_ROUNDS: number =  12;
 
 interface AuthResult{
     token:string,
@@ -49,6 +49,17 @@ async function login(email:string,password:string):Promise<AuthResult>{
 
     if (!PasswordValid){
         throw new AppError('Invalid email or password', 401, "INVALID_CREDENTIALS");
+    }
+
+    const currentRounds = bycrypt.getRounds(user.passwordHashed);
+    if (currentRounds < SALT_ROUNDS){
+        try{
+            user.passwordHashed = await bycrypt.hash(password,SALT_ROUNDS);
+            await user.save();
+            logger.info({userId: user._id.toString()},'Upgraded password hash to current cost');
+        }catch(err){
+            logger.error({err,userId: user._id.toString()},'Failed to upgrade password hash');
+        }
     }
     logger.info({userId: user._id.toString()},'User logged in successfully');
     const token = generateToken(user);

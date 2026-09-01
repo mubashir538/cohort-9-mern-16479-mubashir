@@ -1,6 +1,5 @@
 import dotenv from 'dotenv';
 dotenv.config();
-
 import logger from './config/logger';
 import app from './app';
 import connectToDatabase from './config/db';
