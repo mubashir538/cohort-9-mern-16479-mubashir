@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 
-const baseURL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
+const baseURL = import.meta.env.VITE_BACKEND_URL;
 
 if(!baseURL){
     throw new Error('Vite backend url not configured');
