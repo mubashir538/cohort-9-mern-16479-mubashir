@@ -4,16 +4,17 @@
     "lib": ["ES2020"],
     "module": "CommonJS",
     "outDir": "./dist",
-    "rootDir": "./src",
+    "rootDir": ".",
     "strict": true,
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
     "forceConsistentCasingInFileNames": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "types": ["node", "mocha"]
   },
-  "include": ["src/**/*.ts"],
-  "exclude": ["node_modules", "dist", "tests"],
+  "include": ["src/**/*.ts","tests/**/*.ts"],
+  "exclude": ["node_modules", "dist", "dist-test"],
   "ts-node": {
   "files":true
   }
