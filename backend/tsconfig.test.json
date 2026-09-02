@@ -3,7 +3,8 @@
     "compilerOptions": {
       "outDir": "./dist-test",
       "rootDir": ".",
-      "isolatedModules": false
+      "isolatedModules": false,
+      "types": ["node", "mocha"]
     },
     "include": ["src/**/*.ts", "tests/**/*.ts"],
     "exclude": ["node_modules", "dist", "dist-test"]

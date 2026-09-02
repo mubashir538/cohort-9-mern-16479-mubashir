@@ -3,6 +3,41 @@ import sinon from 'sinon';
 import { Note } from '../../src/models';
 import notesService from '../../src/services/notes.service';
 import AppError from '../../src/utils/Errors';
+import { runAsync } from '../runAsync';
+
+interface FakeCreatedNote {
+    _id: { toString(): string };
+    title: string;
+    userId: string;
+}
+
+interface FakeNoteFindQuery {
+    sort: sinon.SinonStub;
+}
+
+interface NotesSearchFilter {
+    userId: string;
+    $or?: Array<Record<string, unknown>>;
+}
+
+interface FakeSavedNote {
+    _id: string;
+    title: string;
+    content: string;
+    userId: string;
+    save: sinon.SinonStub;
+}
+
+interface FakeDeletableNote {
+    _id: string;
+    userId: string;
+    deleteOne: sinon.SinonStub;
+}
+
+interface FakeFoundNote {
+    _id: string;
+    title: string;
+}
 
 describe('notesService', () => {
 
@@ -13,10 +48,19 @@ describe('notesService', () => {
     describe('createNote', () => {
 
         it('creates a note tied to the given user', async () => {
-            const fakeNote = { _id: { toString: () => 'note-1' }, title: 'Groceries', userId: 'user-1' };
-            const createStub = sinon.stub(Note, 'create').resolves(fakeNote as any);
+            const fakeNote: FakeCreatedNote = {
+                _id: { toString: () => 'note-1' },
+                title: 'Groceries',
+                userId: 'user-1',
+            };
+            const createStub = sinon.stub(Note, 'create').resolves(fakeNote as unknown as Awaited<ReturnType<typeof Note.create>>);
 
-            const note = await notesService.createNote('user-1', 'Groceries', 'milk, eggs');
+            let note;
+            try {
+                note = await runAsync(notesService.createNote('user-1', 'Groceries', 'milk, eggs'));
+            } catch (err) {
+                throw err;
+            }
 
             expect(note.title).to.equal('Groceries');
             expect(createStub.firstCall.args[0]).to.deep.include({ userId: 'user-1', title: 'Groceries', content: 'milk, eggs' });
@@ -29,8 +73,11 @@ describe('notesService', () => {
                 await notesService.createNote('user-1', 'x');
                 expect.fail('should have thrown');
             } catch (err) {
-                expect((err as AppError).statusCode).to.equal(500);
-                expect((err as AppError).code).to.equal('NOTE_CREATE_FAILED');
+                if (!(err instanceof AppError)) {
+                    throw err;
+                }
+                expect(err.statusCode).to.equal(500);
+                expect(err.code).to.equal('NOTE_CREATE_FAILED');
             }
         });
 
@@ -40,29 +87,44 @@ describe('notesService', () => {
 
         it('splits a camelCase search term into separate tokens across title and content', async () => {
             const sortStub = sinon.stub().resolves([]);
-            const findStub = sinon.stub(Note, 'find').returns({ sort: sortStub } as any);
+            const findQuery: FakeNoteFindQuery = { sort: sortStub };
+            const findStub = sinon.stub(Note, 'find').returns(findQuery as unknown as ReturnType<typeof Note.find>);
 
-            await notesService.getAllNotes('user-1', { searchTerm: 'codingGuy' });
+            try {
+                await runAsync(notesService.getAllNotes('user-1', { searchTerm: 'codingGuy' }));
+            } catch (err) {
+                throw err;
+            }
 
-            const filterUsed = findStub.firstCall.args[0] as any;
+            const filterUsed = findStub.firstCall.args[0] as unknown as NotesSearchFilter;
             expect(filterUsed.userId).to.equal('user-1');
             expect(filterUsed.$or).to.have.length(4);
         });
 
         it('sorts pinned notes first no matter which sort option is picked', async () => {
             const sortStub = sinon.stub().resolves([]);
-            sinon.stub(Note, 'find').returns({ sort: sortStub } as any);
+            const findQuery: FakeNoteFindQuery = { sort: sortStub };
+            sinon.stub(Note, 'find').returns(findQuery as unknown as ReturnType<typeof Note.find>);
 
-            await notesService.getAllNotes('user-1', { sort: 'title_asc' });
+            try {
+                await runAsync(notesService.getAllNotes('user-1', { sort: 'title_asc' }));
+            } catch (err) {
+                throw err;
+            }
 
             expect(sortStub.firstCall.args[0]).to.deep.equal({ isPinned: -1, title: 1 });
         });
 
         it('does not attach an $or filter when no search term is given', async () => {
             const sortStub = sinon.stub().resolves([]);
-            const findStub = sinon.stub(Note, 'find').returns({ sort: sortStub } as any);
+            const findQuery: FakeNoteFindQuery = { sort: sortStub };
+            const findStub = sinon.stub(Note, 'find').returns(findQuery as unknown as ReturnType<typeof Note.find>);
 
-            await notesService.getAllNotes('user-1', {});
+            try {
+                await runAsync(notesService.getAllNotes('user-1', {}));
+            } catch (err) {
+                throw err;
+            }
 
             expect(findStub.firstCall.args[0]).to.deep.equal({ userId: 'user-1' });
         });
@@ -76,8 +138,11 @@ describe('notesService', () => {
                 await notesService.getNotebyId('user-1', 'not-a-real-object-id');
                 expect.fail('should have thrown');
             } catch (err) {
-                expect((err as AppError).statusCode).to.equal(400);
-                expect((err as AppError).code).to.equal('INVALID_NOTE_ID');
+                if (!(err instanceof AppError)) {
+                    throw err;
+                }
+                expect(err.statusCode).to.equal(400);
+                expect(err.code).to.equal('INVALID_NOTE_ID');
             }
         });
 
@@ -88,15 +153,25 @@ describe('notesService', () => {
                 await notesService.getNotebyId('user-1', '507f1f77bcf86cd799439011');
                 expect.fail('should have thrown');
             } catch (err) {
-                expect((err as AppError).statusCode).to.equal(404);
-                expect((err as AppError).code).to.equal('NOTE_NOT_FOUND');
+                if (!(err instanceof AppError)) {
+                    throw err;
+                }
+                expect(err.statusCode).to.equal(404);
+                expect(err.code).to.equal('NOTE_NOT_FOUND');
             }
         });
 
         it('returns the note when everything checks out', async () => {
-            sinon.stub(Note, 'findOne').resolves({ _id: '507f1f77bcf86cd799439011', title: 'x' } as any);
+            const fakeNote: FakeFoundNote = { _id: '507f1f77bcf86cd799439011', title: 'x' };
+            sinon.stub(Note, 'findOne').resolves(fakeNote as unknown as Awaited<ReturnType<typeof Note.findOne>>);
 
-            const note = await notesService.getNotebyId('user-1', '507f1f77bcf86cd799439011');
+            let note;
+            try {
+                note = await runAsync(notesService.getNotebyId('user-1', '507f1f77bcf86cd799439011'));
+            } catch (err) {
+                throw err;
+            }
+
             expect(note.title).to.equal('x');
         });
 
@@ -105,16 +180,23 @@ describe('notesService', () => {
     describe('updateNote', () => {
 
         it('only changes the fields actually passed in', async () => {
-            const fakeNote: any = {
+            const fakeNote: FakeSavedNote = {
                 _id: '507f1f77bcf86cd799439011',
                 title: 'Old',
                 content: 'Old content',
                 userId: 'user-1',
                 save: sinon.stub().resolves(),
             };
-            sinon.stub(Note, 'findOne').resolves(fakeNote);
+            sinon.stub(Note, 'findOne').resolves(fakeNote as unknown as Awaited<ReturnType<typeof Note.findOne>>);
 
-            const updated = await notesService.updateNote('user-1', '507f1f77bcf86cd799439011', { title: 'New' });
+            let updated;
+            try {
+                updated = await runAsync(
+                    notesService.updateNote('user-1', '507f1f77bcf86cd799439011', { title: 'New' })
+                );
+            } catch (err) {
+                throw err;
+            }
 
             expect(updated.title).to.equal('New');
             expect(updated.content).to.equal('Old content');
@@ -122,19 +204,23 @@ describe('notesService', () => {
         });
 
         it('returns 500 NOTE_UPDATE_FAILED if save blows up', async () => {
-            const fakeNote: any = {
+            const fakeNote: FakeSavedNote = {
                 _id: '507f1f77bcf86cd799439011',
                 title: 'Old',
+                content: '',
                 userId: 'user-1',
                 save: sinon.stub().rejects(new Error('nope')),
             };
-            sinon.stub(Note, 'findOne').resolves(fakeNote);
+            sinon.stub(Note, 'findOne').resolves(fakeNote as unknown as Awaited<ReturnType<typeof Note.findOne>>);
 
             try {
                 await notesService.updateNote('user-1', '507f1f77bcf86cd799439011', { title: 'New' });
                 expect.fail('should have thrown');
             } catch (err) {
-                expect((err as AppError).code).to.equal('NOTE_UPDATE_FAILED');
+                if (!(err instanceof AppError)) {
+                    throw err;
+                }
+                expect(err.code).to.equal('NOTE_UPDATE_FAILED');
             }
         });
 
@@ -145,7 +231,10 @@ describe('notesService', () => {
                 await notesService.updateNote('user-2', '507f1f77bcf86cd799439011', { title: 'Hacked' });
                 expect.fail('should have thrown');
             } catch (err) {
-                expect((err as AppError).statusCode).to.equal(404);
+                if (!(err instanceof AppError)) {
+                    throw err;
+                }
+                expect(err.statusCode).to.equal(404);
             }
         });
 
@@ -154,23 +243,38 @@ describe('notesService', () => {
     describe('deleteNote', () => {
 
         it('deletes the note when it belongs to the user', async () => {
-            const fakeNote: any = { _id: '507f1f77bcf86cd799439011', userId: 'user-1', deleteOne: sinon.stub().resolves() };
-            sinon.stub(Note, 'findOne').resolves(fakeNote);
+            const fakeNote: FakeDeletableNote = {
+                _id: '507f1f77bcf86cd799439011',
+                userId: 'user-1',
+                deleteOne: sinon.stub().resolves(),
+            };
+            sinon.stub(Note, 'findOne').resolves(fakeNote as unknown as Awaited<ReturnType<typeof Note.findOne>>);
 
-            await notesService.deleteNote('user-1', '507f1f77bcf86cd799439011');
+            try {
+                await runAsync(notesService.deleteNote('user-1', '507f1f77bcf86cd799439011'));
+            } catch (err) {
+                throw err;
+            }
 
             expect(fakeNote.deleteOne.called).to.be.true;
         });
 
         it('returns 500 NOTE_DELETE_FAILED if deleteOne blows up', async () => {
-            const fakeNote: any = { _id: '507f1f77bcf86cd799439011', userId: 'user-1', deleteOne: sinon.stub().rejects(new Error('nope')) };
-            sinon.stub(Note, 'findOne').resolves(fakeNote);
+            const fakeNote: FakeDeletableNote = {
+                _id: '507f1f77bcf86cd799439011',
+                userId: 'user-1',
+                deleteOne: sinon.stub().rejects(new Error('nope')),
+            };
+            sinon.stub(Note, 'findOne').resolves(fakeNote as unknown as Awaited<ReturnType<typeof Note.findOne>>);
 
             try {
                 await notesService.deleteNote('user-1', '507f1f77bcf86cd799439011');
                 expect.fail('should have thrown');
             } catch (err) {
-                expect((err as AppError).code).to.equal('NOTE_DELETE_FAILED');
+                if (!(err instanceof AppError)) {
+                    throw err;
+                }
+                expect(err.code).to.equal('NOTE_DELETE_FAILED');
             }
         });
 
@@ -181,7 +285,10 @@ describe('notesService', () => {
                 await notesService.deleteNote('user-2', '507f1f77bcf86cd799439011');
                 expect.fail('should have thrown');
             } catch (err) {
-                expect((err as AppError).statusCode).to.equal(404);
+                if (!(err instanceof AppError)) {
+                    throw err;
+                }
+                expect(err.statusCode).to.equal(404);
             }
         });
 
