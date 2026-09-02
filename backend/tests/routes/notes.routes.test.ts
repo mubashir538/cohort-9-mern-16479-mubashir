@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
-import request from 'supertest';
+import request, { type Response } from 'supertest';
 import jwt from 'jsonwebtoken';
 import app from '../../src/app';
 import notesService from '../../src/services/notes.service';
@@ -38,7 +38,7 @@ describe('GET /api/notes', () => {
     });
 
     it('rejects when there is no cookie', async () => {
-        let res;
+        let res: Response;
         try {
             res = await runAsync(request(app).get('/api/notes'));
         } catch (err) {
@@ -52,7 +52,7 @@ describe('GET /api/notes', () => {
         const stubNotes: StubNoteListItem[] = [{ _id: '1', title: 'Note 1' }];
         sinon.stub(notesService, 'getAllNotes').resolves(stubNotes as unknown as Awaited<ReturnType<typeof notesService.getAllNotes>>);
 
-        let res;
+        let res: Response;
         try {
             res = await runAsync(withCookie(request(app).get('/api/notes')));
         } catch (err) {
@@ -66,7 +66,7 @@ describe('GET /api/notes', () => {
     it('rejects a search term longer than 100 characters', async () => {
         const longSearch = 'a'.repeat(101);
 
-        let res;
+        let res: Response;
         try {
             res = await runAsync(
                 withCookie(request(app).get('/api/notes').query({ search: longSearch }))
@@ -80,7 +80,7 @@ describe('GET /api/notes', () => {
     });
 
     it('rejects a sort value that is not one of the allowed options', async () => {
-        let res;
+        let res: Response;
         try {
             res = await runAsync(
                 withCookie(request(app).get('/api/notes').query({ sort: 'banana' }))
@@ -101,7 +101,7 @@ describe('POST /api/notes', () => {
     });
 
     it('requires a title', async () => {
-        let res;
+        let res: Response;
         try {
             res = await runAsync(
                 withCookie(request(app).post('/api/notes').send({ content: 'no title here' }))
@@ -117,7 +117,7 @@ describe('POST /api/notes', () => {
         const stubNote: StubNoteDetail = { _id: '1', title: 'New note' };
         sinon.stub(notesService, 'createNote').resolves(stubNote as unknown as Awaited<ReturnType<typeof notesService.createNote>>);
 
-        let res;
+        let res: Response;
         try {
             res = await runAsync(
                 withCookie(request(app).post('/api/notes').send({ title: 'New note' }))
@@ -131,7 +131,7 @@ describe('POST /api/notes', () => {
     });
 
     it('rejects a highlight color that is not a real hex code', async () => {
-        let res;
+        let res: Response;
         try {
             res = await runAsync(
                 withCookie(request(app).post('/api/notes').send({ title: 'x', highlightColor: 'notahex' }))
@@ -147,7 +147,7 @@ describe('POST /api/notes', () => {
         const stubNote: StubNoteDetail = { _id: '1', title: 'x', highlightColor: '#fb5743' };
         sinon.stub(notesService, 'createNote').resolves(stubNote as unknown as Awaited<ReturnType<typeof notesService.createNote>>);
 
-        let res;
+        let res: Response;
         try {
             res = await runAsync(
                 withCookie(request(app).post('/api/notes').send({ title: 'x', highlightColor: '#fb5743' }))
@@ -170,7 +170,7 @@ describe('GET /api/notes/:id', () => {
     it('returns 404 when the note does not exist or is not yours', async () => {
         sinon.stub(notesService, 'getNotebyId').rejects(new AppError('Note not found', 404, 'NOTE_NOT_FOUND'));
 
-        let res;
+        let res: Response;
         try {
             res = await runAsync(withCookie(request(app).get(`/api/notes/${validNoteId}`)));
         } catch (err) {
@@ -185,7 +185,7 @@ describe('GET /api/notes/:id', () => {
         const stubNote: StubNoteDetail = { _id: validNoteId, title: 'x' };
         sinon.stub(notesService, 'getNotebyId').resolves(stubNote as unknown as Awaited<ReturnType<typeof notesService.getNotebyId>>);
 
-        let res;
+        let res: Response;
         try {
             res = await runAsync(withCookie(request(app).get(`/api/notes/${validNoteId}`)));
         } catch (err) {
@@ -204,7 +204,7 @@ describe('PUT /api/notes/:id', () => {
     });
 
     it('rejects an empty update body', async () => {
-        let res;
+        let res: Response;
         try {
             res = await runAsync(
                 withCookie(request(app).put(`/api/notes/${validNoteId}`).send({}))
@@ -220,7 +220,7 @@ describe('PUT /api/notes/:id', () => {
         const stubNote: StubNoteDetail = { _id: validNoteId, title: 'x', isPinned: true };
         sinon.stub(notesService, 'updateNote').resolves(stubNote as unknown as Awaited<ReturnType<typeof notesService.updateNote>>);
 
-        let res;
+        let res: Response;
         try {
             res = await runAsync(
                 withCookie(request(app).put(`/api/notes/${validNoteId}`).send({ isPinned: true }))
@@ -237,7 +237,7 @@ describe('PUT /api/notes/:id', () => {
         const stubNote: StubNoteDetail = { _id: validNoteId, title: 'x', highlightColor: '#fb5743' };
         sinon.stub(notesService, 'updateNote').resolves(stubNote as unknown as Awaited<ReturnType<typeof notesService.updateNote>>);
 
-        let res;
+        let res: Response;
         try {
             res = await runAsync(
                 withCookie(request(app).put(`/api/notes/${validNoteId}`).send({ highlightColor: '#fb5743' }))
@@ -260,7 +260,7 @@ describe('DELETE /api/notes/:id', () => {
     it('returns 200 on a successful delete', async () => {
         sinon.stub(notesService, 'deleteNote').resolves();
 
-        let res;
+        let res: Response;
         try {
             res = await runAsync(withCookie(request(app).delete(`/api/notes/${validNoteId}`)));
         } catch (err) {
@@ -274,7 +274,7 @@ describe('DELETE /api/notes/:id', () => {
     it('returns 404 when trying to delete a note that is not yours', async () => {
         sinon.stub(notesService, 'deleteNote').rejects(new AppError('Note not found', 404, 'NOTE_NOT_FOUND'));
 
-        let res;
+        let res: Response;
         try {
             res = await runAsync(withCookie(request(app).delete(`/api/notes/${validNoteId}`)));
         } catch (err) {

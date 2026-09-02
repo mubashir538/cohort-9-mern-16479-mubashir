@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
-import request from 'supertest';
+import request, { type Response } from 'supertest';
 import app from '../../src/app';
 import authService from '../../src/services/auth.service';
 import AppError from '../../src/utils/Errors';
@@ -24,7 +24,7 @@ describe('POST /api/auth/signup', () => {
         };
         sinon.stub(authService, 'signup').resolves(stubResult);
 
-        let res;
+        let res: Response;
         try {
             res = await runAsync(
                 request(app)
@@ -43,7 +43,7 @@ describe('POST /api/auth/signup', () => {
     });
 
     it('returns 400 when the password is too short', async () => {
-        let res;
+        let res: Response;
         try {
             res = await runAsync(
                 request(app)
@@ -59,7 +59,7 @@ describe('POST /api/auth/signup', () => {
     });
 
     it('returns 400 when the email is not a real email', async () => {
-        let res;
+        let res: Response;
         try {
             res = await runAsync(
                 request(app)
@@ -76,7 +76,7 @@ describe('POST /api/auth/signup', () => {
     it('returns 400 when the service says the email is already taken', async () => {
         sinon.stub(authService, 'signup').rejects(new AppError('User with this email already exists', 400, 'USER_ALREADY_EXISTS'));
 
-        let res;
+        let res: Response;
         try {
             res = await runAsync(
                 request(app)
@@ -106,7 +106,7 @@ describe('POST /api/auth/login', () => {
         };
         sinon.stub(authService, 'login').resolves(stubResult);
 
-        let res;
+        let res: Response;
         try {
             res = await runAsync(
                 request(app)
@@ -124,7 +124,7 @@ describe('POST /api/auth/login', () => {
     it('returns 401 when the credentials are wrong', async () => {
         sinon.stub(authService, 'login').rejects(new AppError('Invalid email or password', 401, 'INVALID_CREDENTIALS'));
 
-        let res;
+        let res: Response;
         try {
             res = await runAsync(
                 request(app)
@@ -140,7 +140,7 @@ describe('POST /api/auth/login', () => {
     });
 
     it('returns 400 when email is missing entirely', async () => {
-        let res;
+        let res: Response;
         try {
             res = await runAsync(
                 request(app)
@@ -159,7 +159,7 @@ describe('POST /api/auth/login', () => {
 describe('POST /api/auth/logout', () => {
 
     it('clears the cookie and returns 200', async () => {
-        let res;
+        let res: Response;
         try {
             res = await runAsync(request(app).post('/api/auth/logout'));
         } catch (err) {
@@ -175,7 +175,7 @@ describe('POST /api/auth/logout', () => {
 describe('GET /api/auth/me', () => {
 
     it('returns 401 with NO_TOKEN_PROVIDED when there is no cookie', async () => {
-        let res;
+        let res: Response;
         try {
             res = await runAsync(request(app).get('/api/auth/me'));
         } catch (err) {
@@ -187,7 +187,7 @@ describe('GET /api/auth/me', () => {
     });
 
     it('returns 401 with INVALID_TOKEN when the cookie is garbage', async () => {
-        let res;
+        let res: Response;
         try {
             res = await runAsync(
                 request(app).get('/api/auth/me').set('Cookie', ['token=not-a-real-token'])

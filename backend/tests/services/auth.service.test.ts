@@ -7,6 +7,9 @@ import authService from '../../src/services/auth.service';
 import AppError from '../../src/utils/Errors';
 import { runAsync } from '../runAsync';
 
+type AuthResult = Awaited<ReturnType<typeof authService.signup>>;
+type AuthUser = Awaited<ReturnType<typeof authService.getUserById>>;
+
 interface FakeObjectId {
     toString(): string;
 }
@@ -60,7 +63,7 @@ describe('authService', () => {
             sinon.stub(User, 'create').resolves(fakeUser as unknown as Awaited<ReturnType<typeof User.create>>);
             sinon.stub(jwt, 'sign').returns('jwt-token' as never);
 
-            let res;
+            let res: AuthResult;
             try {
                 res = await runAsync(authService.signup('Sara', 'sara@gmail.com', 'password123'));
             } catch (err) {
@@ -106,7 +109,7 @@ describe('authService', () => {
             sinon.stub(bcrypt, 'getRounds').returns(12);
             sinon.stub(jwt, 'sign').returns('jwt-token' as never);
 
-            let res;
+            let res: AuthResult;
             try {
                 res = await runAsync(authService.login('sara@gmail.com', 'password123'));
             } catch (err) {
@@ -244,7 +247,7 @@ describe('authService', () => {
             const findByIdQuery: FakeFindByIdQuery = { select: selectStub };
             sinon.stub(User, 'findById').returns(findByIdQuery as unknown as ReturnType<typeof User.findById>);
 
-            let user;
+            let user: AuthUser;
             try {
                 user = await runAsync(authService.getUserById('user-1'));
             } catch (err) {

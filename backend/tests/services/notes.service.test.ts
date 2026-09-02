@@ -5,6 +5,8 @@ import notesService from '../../src/services/notes.service';
 import AppError from '../../src/utils/Errors';
 import { runAsync } from '../runAsync';
 
+type CreatedNote = Awaited<ReturnType<typeof notesService.createNote>>;
+
 interface FakeCreatedNote {
     _id: { toString(): string };
     title: string;
@@ -55,7 +57,7 @@ describe('notesService', () => {
             };
             const createStub = sinon.stub(Note, 'create').resolves(fakeNote as unknown as Awaited<ReturnType<typeof Note.create>>);
 
-            let note;
+            let note: CreatedNote;
             try {
                 note = await runAsync(notesService.createNote('user-1', 'Groceries', 'milk, eggs'));
             } catch (err) {
@@ -165,7 +167,7 @@ describe('notesService', () => {
             const fakeNote: FakeFoundNote = { _id: '507f1f77bcf86cd799439011', title: 'x' };
             sinon.stub(Note, 'findOne').resolves(fakeNote as unknown as Awaited<ReturnType<typeof Note.findOne>>);
 
-            let note;
+            let note: CreatedNote;
             try {
                 note = await runAsync(notesService.getNotebyId('user-1', '507f1f77bcf86cd799439011'));
             } catch (err) {
@@ -189,7 +191,7 @@ describe('notesService', () => {
             };
             sinon.stub(Note, 'findOne').resolves(fakeNote as unknown as Awaited<ReturnType<typeof Note.findOne>>);
 
-            let updated;
+            let updated: CreatedNote;
             try {
                 updated = await runAsync(
                     notesService.updateNote('user-1', '507f1f77bcf86cd799439011', { title: 'New' })
