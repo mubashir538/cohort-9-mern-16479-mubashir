@@ -21,7 +21,9 @@ describe('NoteNotFound', () => {
             </MemoryRouter>
         )
 
-        expect(screen.getByText('Back to Dashboard')).toBeInTheDocument()
+        const dashboardLink = screen.getByRole('link', { name: 'Back to Dashboard' })
+
+        expect(dashboardLink).toHaveAttribute('href', '/dashboard')
     })
 
 })
