@@ -1,7 +1,6 @@
 import {useState, type SubmitEvent} from 'react';
 import {Link, useNavigate} from 'react-router-dom';
 import {useAuth} from '../context/AuthContext';
-import axios from 'axios';
 import './LoginPage.css';
 import {NotebookPen,Mail,LockIcon} from 'lucide-react';
 import {validateEmail} from '../utils/validation'
@@ -28,16 +27,20 @@ function LoginPage(){
         const emailValidationError = validateEmail(email)
         if(emailValidationError){
             setEmailError(emailValidationError);
+            setIsSubmitting(false);
             return;
         }
-        setIsSubmitting(true);
+        if(password == null || password.length === 0){
+            setError('Password is required');
+            setIsSubmitting(false);
+            return;
+        }
         try{
             await login(email,password);
             navigate('/dashboard');
         }catch(err:unknown){
-            if(axios.isAxiosError(err)){
-                const msg = err.response?.data?.error?.message || "Something went wrong";
-                setError(msg); 
+            if(err instanceof Error){
+                setError(err.message);
             }
             else{
                 setError('Something went wrong');

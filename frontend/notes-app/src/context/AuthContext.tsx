@@ -16,6 +16,10 @@ function getAuthErrorMessage(error: unknown): string {
             return message;
         }
 
+        if (message && typeof message === 'object' && 'msg' in message && typeof message.msg === 'string') {
+            return message.msg;
+        }
+
         if (error.response?.status === 401) {
             return 'Invalid email or password';
         }

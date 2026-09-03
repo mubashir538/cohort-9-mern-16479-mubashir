@@ -1,4 +1,8 @@
 export function validateEmail(value: string): string | null {
+    if (value == null) {
+        return 'Email is required'
+    }
+
     const trimmed = value.trim()
 
     if (trimmed.length === 0) {
@@ -33,7 +37,7 @@ export function validateEmail(value: string): string | null {
 }
 
 export function validatePassword(value: string): string | null {
-    if (value.length === 0) {
+    if (value == null || value.length === 0) {
         return 'Password is required'
     }
     if (value.length < 8) {
@@ -50,6 +54,10 @@ export function validatePassword(value: string): string | null {
 }
 
 export function validateName(value: string): string | null {
+    if (value == null) {
+        return 'Name is required'
+    }
+
     const trimmed = value.trim()
     if (trimmed.length === 0) {
         return 'Name is required'
