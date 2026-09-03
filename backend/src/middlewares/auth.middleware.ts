@@ -1,5 +1,5 @@
 import {Request,Response, NextFunction} from 'express';
-import jwt from 'jsonwebtoken';
+import jwt, { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
 import AppError from '../utils/Errors';
 import asyncHandler from '../utils/asyncHandler';
 
@@ -24,7 +24,10 @@ const verifyToken = asyncHandler(async (req: Request, res: Response, next: NextF
         next();
 
     }catch(error){
-        throw new AppError('Invalid or Expired Token Provided ', 401, "INVALID_TOKEN");
+        if (error instanceof JsonWebTokenError || error instanceof TokenExpiredError) {
+            throw new AppError('Invalid or Expired Token Provided ', 401, "INVALID_TOKEN");
+        }
+        throw error;
     }
 });
 

@@ -1,5 +1,4 @@
 import {useState} from 'react';
-import type {FormEvent} from 'react';
 import {Link, useNavigate} from 'react-router-dom';
 import {useAuth} from '../context/AuthContext';
 import axios from 'axios';
@@ -32,7 +31,7 @@ function SignupPage(){
         setPasswordError(validatePassword(password) ?? '')
     }
 
-    async function handleSubmit(e:FormEvent<HTMLFormElement>){
+    async function handleSubmit(e: SubmitEvent){
         e.preventDefault();
         setError('');
         setIsSubmitting(true);
@@ -66,8 +65,7 @@ function SignupPage(){
         }
 
     }
-    return (<>
-
+    return (
         <div className="SignupPage">
     
             <div className="SignupLeftPanel">
@@ -137,7 +135,7 @@ function SignupPage(){
         </div>
     
         </div>
-        </>);
+        );
 }
 
 

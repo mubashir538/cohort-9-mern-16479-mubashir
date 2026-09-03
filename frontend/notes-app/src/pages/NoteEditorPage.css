@@ -84,6 +84,7 @@
   
   .NoteEditorSaveButton:disabled{
     background-color: var(--primary200);
+    color: var(--neutral700);
     cursor: not-allowed;
   }
   
@@ -115,7 +116,7 @@
           padding: 0.5rem 0.9rem;
       border: 0.0625rem solid #e9e4e2;
           background-color: #fff;
-      color: #7a706c;
+      color: #5a524e;
       border-radius: 0.75rem;
       font-size: 0.85rem;
       cursor: pointer;
@@ -123,8 +124,8 @@
       }
       
       .NoteEditorPinButtonActive {
-          border-color: #fb5743;
-      color: #fb5743;
+          border-color: #c73520;
+      color: #c73520;
           background-color: #fff2f0;
       }
       
@@ -138,7 +139,7 @@
       
       .NoteEditorHighlightLabel {
       font-size: 0.8rem;
-      color: #7a706c;
+      color: #5a524e;
           margin-right: 0.25rem;
       }
       

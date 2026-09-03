@@ -7,16 +7,11 @@ import { Types } from 'mongoose';
 
 
 function tokenizedSearch(term:string):string[] {
-    const Words = term.trim().split(/[^a-zA-Z0-9]+/).filter(Boolean);
+    const words = term.trim().split(/[^\w]+/).filter(Boolean);
     const tokens: string[] = [];
 
-    for (const word of Words) {
-        const spaced = word
-            .replace(/([a-z])([A-Z])/g, '$1 $2')
-            .replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2')
-            .replace(/([a-zA-Z])([0-9])/g, '$1 $2')
-            .replace(/([0-9])([a-zA-Z])/g, '$1 $2');
-
+    for (const word of words) {
+        const spaced = word.replace(/([a-z\d])([A-Z])/g, '$1 $2');
         tokens.push(...spaced.split(' '));
     }
     const uniqueTokens = Array.from(new Set(tokens.filter((t) => t.length > 0)));

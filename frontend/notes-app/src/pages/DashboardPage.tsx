@@ -48,6 +48,7 @@ function DashboardPage(): ReactElement{
             if(requestId !== listRequestIdRef.current){
                 return;
             }
+            console.error(err);
             setError('Can not Load Notes');
         }finally{
             if(!signal.aborted && requestId === listRequestIdRef.current){
@@ -86,6 +87,7 @@ function DashboardPage(): ReactElement{
             await notesApi.delete(noteId);
             setNotes((prev)=> prev.filter((n)=> n._id !== noteId));
         }catch(err){
+            console.error(err);
             setError('Failed to delete note');
         }
     }
@@ -114,6 +116,7 @@ function DashboardPage(): ReactElement{
             if(pinRequestIdRef.current[noteId] !== requestId){
                 return;
             }
+            console.error(err);
             setError('Failed to update pin');
             setNotes((prev)=> prev.map((n)=> n._id===noteId ? {...n, isPinned: !isPinned} : n));
         }
@@ -131,12 +134,38 @@ function DashboardPage(): ReactElement{
      async function handleLogout(): Promise<void> {
         try {
             await logout();
-        } catch {
-            console.error('Failed to log out');
+        } catch (err) {
+            console.error('Failed to log out', err);
         }
     }
 
-    return (<>
+    function getWelcomeText(): string {
+        if (notes.length === 0) {
+            return "You don't have any notes yet, create your first one below";
+        }
+
+        const noteLabel = notes.length === 1 ? 'note' : 'notes';
+        return `You have ${notes.length} ${noteLabel} saved in your account`;
+    }
+
+    function renderNotesSection() {
+        if (isLoading) {
+            return <p className="DashboardLoadingText">Loading...</p>;
+        }
+
+        if (notes.length === 0) {
+            const emptyText = searchTerm ? 'No Notes match your Search' : 'No Notes Yet  Create a New Note';
+            return <p className="DashboardEmptyText">{emptyText}</p>;
+        }
+
+        return (
+            <div className="DashboardNotesGrid">
+                {notes.map((note)=>(<NoteCard key={note._id} note={note} onDelete={handleDelete} onTogglePin={handleTogglePin} isPinning={pendingPinIds.has(note._id)}/>))}
+            </div>
+        );
+    }
+
+    return (
     <div className="DashboardPage">
 
     <div className="DashboardHeader">
@@ -160,7 +189,7 @@ function DashboardPage(): ReactElement{
         <span className="DashboardWelcomeEyebrow">Welcome back</span>
         <h2 className="DashboardWelcomeName">{user?.name}</h2>
         <p className="DashboardWelcomeSub">
-        {notes.length === 0 ? "You don't have any notes yet, create your first one below" : `You have ${notes.length} note${notes.length===1?'':'s'} saved in your account`}
+        {getWelcomeText()}
         </p>
 
     </div>
@@ -182,18 +211,10 @@ function DashboardPage(): ReactElement{
 
 {error && <p className="DashboardError">{error}</p>}
 
-{isLoading?(
-    <p className="DashboardLoadingText">Loading...</p>
-):
-((notes.length === 0)?(
-    <p className="DashboardEmptyText"> {searchTerm? 'No Notes match your Search': 'No Notes Yet  Create a New Note'}</p>
-):(<div className="DashboardNotesGrid">
-        {notes.map((note)=>(<NoteCard key={note._id} note={note} onDelete={handleDelete} onTogglePin={handleTogglePin} isPinning={pendingPinIds.has(note._id)}/>))}
-</div>)
-)}
+{renderNotesSection()}
 
     </div>
-    </>);
+    );
 }
 
 

@@ -1,7 +1,6 @@
 import {Request, Response, NextFunction} from 'express';
 import logger from '../config/logger';
 import AppError from '../utils/Errors';
-import type {} from 'pino-http';
 
 
 function errorMiddleWare(err: unknown, req: Request, res: Response, next: NextFunction): void{

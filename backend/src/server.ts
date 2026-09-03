@@ -26,8 +26,8 @@ function getPort():number{
   if (!/^\d+$/.test(port)) {
   throw new Error(`Invalid PORT value: ${port}`);
 }
-  const parsedPort = parseInt(port,10);
-  if (isNaN(parsedPort) || parsedPort <= 0 || parsedPort > 65535){
+  const parsedPort = Number.parseInt(port,10);
+  if (Number.isNaN(parsedPort) || parsedPort <= 0 || parsedPort > 65535){
     throw new Error(`Invalid PORT value: ${port}`);
   }
 

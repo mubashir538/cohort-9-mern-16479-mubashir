@@ -1,8 +1,12 @@
 import mongoose from 'mongoose';
 import logger from './logger';
-import dns from 'dns';
+import dns from 'node:dns';
 
-dns.setServers(['8.8.8.8', '1.1.1.1']);
+const dnsServers = (process.env.DNS_SERVERS || '').split(',').map((server) => server.trim()).filter(Boolean);
+
+if (dnsServers.length > 0) {
+    dns.setServers(dnsServers);
+}
 
 async function connectToDatabase(): Promise<void> {
     const mongoURI = process.env.MONGODB_URI as string;

@@ -7,3 +7,8 @@ build/
 *.log
 
 .DS_Store
+
+.scannerwork/
+.sonar/
+backend/coverage/
+frontend/notes-app/coverage/

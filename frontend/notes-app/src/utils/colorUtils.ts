@@ -20,9 +20,9 @@ function hexToRgb(hex: string): { r: number, g: number, b: number } {
         sanitized = sanitized.split('').map((c) => c + c).join('')
     }
 
-    const r = parseInt(sanitized.substring(0, 2), 16)
-    const g = parseInt(sanitized.substring(2, 4), 16)
-    const b = parseInt(sanitized.substring(4, 6), 16)
+    const r = Number.parseInt(sanitized.substring(0, 2), 16)
+    const g = Number.parseInt(sanitized.substring(2, 4), 16)
+    const b = Number.parseInt(sanitized.substring(4, 6), 16)
 
     return { r, g, b }
 }

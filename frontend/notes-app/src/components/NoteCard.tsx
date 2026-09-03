@@ -18,7 +18,7 @@ function stripHtml(html:string):string{
     return temp.textContent||temp.innerText||"";    
 }
 
-function NoteCard({note,onDelete,onTogglePin,isPinning}: NoteCardProps){
+function NoteCard({note,onDelete,onTogglePin,isPinning}: Readonly<NoteCardProps>){
     const preview = stripHtml(note.content).substring(0,140);
     const textColor = note.highlightColor ? getContrastTextColor(note.highlightColor) : undefined;
 

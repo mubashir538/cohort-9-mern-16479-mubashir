@@ -1,5 +1,4 @@
 import {Request,Response} from 'express';
-import AppError from '../utils/Errors';
 import asyncHandler from '../utils/asyncHandler';
 import notesService from '../services/notes.service';
 import { createNoteSchema, updateNoteSchema, notesQuerySchema } from '../validators/notes.validator';
