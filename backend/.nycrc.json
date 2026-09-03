@@ -1,0 +1,13 @@
+{
+  "all": false,
+  "include": ["src/**/*.ts", "dist-test/src/**/*.js"],
+  "exclude": ["src/**/*.d.ts", "tests/**", "dist-test/tests/**", "**/node_modules/**", "coverage/**"],
+  "extension": [".ts", ".js"],
+  "reporter": ["lcov", "text"],
+  "report-dir": "coverage",
+  "sourceMap": true,
+  "cache": false,
+  "env": {
+    "NODE_ENV": "test"
+  }
+}

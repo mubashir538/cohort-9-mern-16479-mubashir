@@ -4,6 +4,7 @@
       "outDir": "./dist-test",
       "rootDir": ".",
       "isolatedModules": false,
+      "sourceMap": true,
       "types": ["node", "mocha"]
     },
     "include": ["src/**/*.ts", "tests/**/*.ts"],
