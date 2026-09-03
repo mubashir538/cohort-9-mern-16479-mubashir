@@ -6,13 +6,63 @@ import logger from '../config/logger';
 import { Types } from 'mongoose';
 
 
+function isLower(ch: string): boolean {
+    return ch >= 'a' && ch <= 'z';
+}
+
+function isUpper(ch: string): boolean {
+    return ch >= 'A' && ch <= 'Z';
+}
+
+function isDigit(ch: string): boolean {
+    return ch >= '0' && ch <= '9';
+}
+
+function shouldSplitBefore(word: string, index: number): boolean {
+    const ch = word[index];
+    const prev = word[index - 1];
+    const next = word[index + 1] ?? '';
+
+    if (isLower(prev) && isUpper(ch)) {
+        return true;
+    }
+
+    if (isUpper(prev) && isUpper(ch) && isLower(next)) {
+        return true;
+    }
+
+    if ((isLower(prev) || isUpper(prev)) && isDigit(ch)) {
+        return true;
+    }
+
+    if (isDigit(prev) && (isLower(ch) || isUpper(ch))) {
+        return true;
+    }
+
+    return false;
+}
+
+function splitWordTokens(word: string): string[] {
+    const tokens: string[] = [];
+    let start = 0;
+
+    for (let i = 1; i < word.length; i++) {
+        if (shouldSplitBefore(word, i)) {
+            tokens.push(word.slice(start, i));
+            start = i;
+        }
+    }
+
+    tokens.push(word.slice(start));
+    return tokens;
+}
+
 function tokenizedSearch(term:string):string[] {
-    const words = term.trim().split(/[^\w]+/).filter(Boolean);
+    const words = term.trim().split(/[^a-zA-Z0-9]+/).filter(Boolean);
     const tokens: string[] = [];
 
     for (const word of words) {
-        const spaced = word.replace(/([a-z\d])([A-Z])/g, '$1 $2');
-        tokens.push(...spaced.split(' '));
+        tokens.push(...splitWordTokens(word));
     }
     const uniqueTokens = Array.from(new Set(tokens.filter((t) => t.length > 0)));
     return uniqueTokens.slice(0, 10);

@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useState, type SubmitEvent} from 'react';
 import {Link, useNavigate} from 'react-router-dom';
 import {useAuth} from '../context/AuthContext';
 import axios from 'axios';
@@ -21,7 +21,7 @@ function LoginPage(){
     }
 
 
-    async function handleSubmit(e: SubmitEvent){
+    async function handleSubmit(e: SubmitEvent<HTMLFormElement>){
         e.preventDefault();
         setError('');
         setIsSubmitting(true);

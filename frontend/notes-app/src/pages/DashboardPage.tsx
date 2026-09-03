@@ -148,7 +148,7 @@ function DashboardPage(): ReactElement{
         return `You have ${notes.length} ${noteLabel} saved in your account`;
     }
 
-    function renderNotesSection() {
+    function renderNotesSection(): ReactElement {
         if (isLoading) {
             return <p className="DashboardLoadingText">Loading...</p>;
         }

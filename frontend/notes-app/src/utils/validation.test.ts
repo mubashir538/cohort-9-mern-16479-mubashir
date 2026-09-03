@@ -10,6 +10,11 @@ describe('validateEmail', () => {
         expect(validateEmail('not-an-email')).toBe('Enter a valid email address')
     })
 
+    it('returns error when email has internal whitespace', () => {
+        expect(validateEmail('a b@example.com')).toBe('Enter a valid email address')
+        expect(validateEmail('a@ex ample.com')).toBe('Enter a valid email address')
+    })
+
     it('returns null for a valid email', () => {
         expect(validateEmail('sara@gmail.com')).toBeNull()
     })

@@ -103,6 +103,32 @@ describe('notesService', () => {
             expect(filterUsed.$or).to.have.length(4);
         });
 
+        it('splits underscore, camelCase, and letter-digit search terms into separate tokens', async () => {
+            const searchCases = [
+                { searchTerm: 'foo_bar', tokenCount: 2 },
+                { searchTerm: 'HTTPServer', tokenCount: 2 },
+                { searchTerm: 'version2', tokenCount: 2 },
+                { searchTerm: '2fa', tokenCount: 2 },
+            ];
+
+            for (const searchCase of searchCases) {
+                const sortStub = sinon.stub().resolves([]);
+                const findQuery: FakeNoteFindQuery = { sort: sortStub };
+                const findStub = sinon.stub(Note, 'find').returns(findQuery as unknown as ReturnType<typeof Note.find>);
+
+                try {
+                    await runAsync(notesService.getAllNotes('user-1', { searchTerm: searchCase.searchTerm }));
+                } catch (err) {
+                    throw err;
+                }
+
+                const filterUsed = findStub.firstCall.args[0] as unknown as NotesSearchFilter;
+                expect(filterUsed.$or).to.have.length(searchCase.tokenCount * 2);
+
+                findStub.restore();
+            }
+        });
+
         it('sorts pinned notes first no matter which sort option is picked', async () => {
             const sortStub = sinon.stub().resolves([]);
             const findQuery: FakeNoteFindQuery = { sort: sortStub };

@@ -11,4 +11,5 @@ build/
 .scannerwork/
 .sonar/
 backend/coverage/
+backend/.nyc_output/
 frontend/notes-app/coverage/

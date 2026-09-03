@@ -4,6 +4,9 @@ export function validateEmail(value: string): string | null {
     if (trimmed.length === 0) {
         return 'Email is required'
     }
+    if (/\s/.test(trimmed)) {
+        return 'Enter a valid email address'
+    }
     const atIndex = trimmed.indexOf('@')
     if (atIndex <= 0 || atIndex !== trimmed.lastIndexOf('@')) {
         return 'Enter a valid email address'

@@ -10,15 +10,17 @@ describe('ErrorBoundary', () => {
     it('shows fallback ui when a child throws', () => {
         const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {})
 
-        render(
-            <ErrorBoundary>
-                <BrokenChild />
-            </ErrorBoundary>
-        )
+        try {
+            render(
+                <ErrorBoundary>
+                    <BrokenChild />
+                </ErrorBoundary>
+            )
 
-        expect(screen.getByText('Something went wrong.')).toBeInTheDocument()
-
-        consoleError.mockRestore()
+            expect(screen.getByText('Something went wrong.')).toBeInTheDocument()
+        } finally {
+            consoleError.mockRestore()
+        }
     })
 
 })
